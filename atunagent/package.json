@@ -1,8 +1,29 @@
 {
   "name": "atun-agent",
+  "publisher": "capriadev",
   "displayName": "Atun Agent",
   "description": "Native VS Code chat agent",
-  "version": "1.1.0",
+  "version": "1.1.1",
+  "author": {
+    "name": "capriadev",
+    "url": "https://github.com/capriadev"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/capriadev/atun-agent.git"
+  },
+  "homepage": "https://github.com/capriadev/atun-agent#readme",
+  "bugs": {
+    "url": "https://github.com/capriadev/atun-agent/issues"
+  },
+  "keywords": [
+    "agent",
+    "chat",
+    "ai",
+    "vscode",
+    "llm"
+  ],
   "engines": {
     "vscode": "^1.110.0"
   },

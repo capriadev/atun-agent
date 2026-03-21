@@ -2,6 +2,8 @@
 
 Extension de agente de chat para VS Code con UI propia en sidebar, orientada a flujo tipo Codex/Claude/Roo.
 
+Repo oficial: https://github.com/capriadev/atun-agent
+
 ## Caracteristicas
 
 - Vista de chat completa en sidebar (historial + composer inferior).

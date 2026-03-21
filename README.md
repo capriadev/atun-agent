@@ -1,28 +1,34 @@
 # Atun Agent Workspace
 
-Atun Agent es una extension de VS Code con UI de chat en sidebar (estilo agentes tipo Codex/Claude/Roo), con composer inferior, adjuntos, slash skills, selectores y conteo de tokens.
+Repo: https://github.com/capriadev/atun-agent
 
-## Proyecto activo
-
-- `atunagent/`: extension TypeScript principal.
-
-## Comandos desde la raiz
+## Setup rapido (local)
 
 ```bash
 npm run install:ext
 npm run compile
-npm run watch
-npm run test
-npm run package
 ```
 
-## Estado actual
+## Generar VSIX local por version
 
-- UI de agente tipo chat en sidebar (no listado de opciones).
-- Atajo rapido: `Ctrl+Shift+A` / `Cmd+Shift+A`.
-- Selector de acceso: `isolated` y `full`.
-- Conteo de tokens por `model.countTokens(...)` (input, adjuntos, snapshot de proyecto e imagenes).
+```bash
+npm run package:local
+```
 
-## Autor
+Esto genera:
 
-[capriadev](https://github.com/capriadev)
+```text
+packages/v{version}/atun-agent-{version}.vsix
+```
+
+Ejemplo actual:
+
+```text
+packages/v1.1.1/atun-agent-1.1.1.vsix
+```
+
+## Instalar VSIX local
+
+```bash
+code --install-extension packages/v1.1.1/atun-agent-1.1.1.vsix
+```

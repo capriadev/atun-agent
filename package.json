@@ -1,13 +1,14 @@
 {
   "name": "atun-agent-workspace",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Workspace wrapper for Atun Agent VS Code extension",
   "scripts": {
     "install:ext": "npm --prefix atunagent install",
     "compile": "npm --prefix atunagent run compile",
     "watch": "npm --prefix atunagent run watch",
     "test": "npm --prefix atunagent run test",
-    "package": "npm --prefix atunagent run package"
+    "package": "npm --prefix atunagent run package",
+    "package:local": "node scripts/package-vsix.mjs"
   }
 }

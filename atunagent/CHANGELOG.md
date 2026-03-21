@@ -2,6 +2,20 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [1.1.1] - 2026-03-21
+
+### Added
+- Extension metadata for repo/local distribution:
+  - `publisher`, `author`, `license`, `repository`, `homepage`, `bugs`, `keywords`.
+- Root packaging script: `npm run package:local`.
+- Versioned VSIX output automation:
+  - `scripts/package-vsix.mjs`
+  - output to `packages/v{version}/atun-agent-{version}.vsix`.
+
+### Changed
+- Updated root README with simple local install/package flow.
+- Updated workspace wrapper package scripts for local packaging flow.
+
 ## [1.1.0] - 2026-03-21
 
 ### Added
