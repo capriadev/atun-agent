@@ -3,7 +3,7 @@
   "publisher": "capriadev",
   "displayName": "Atun Agent",
   "description": "Native VS Code chat agent (@atun) with minimal launcher, workspace tools and guarded terminal/file actions",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "icon": "assets/icons/logo/atunagent-icon.png",
   "author": {
     "name": "capriadev",

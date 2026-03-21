@@ -2,28 +2,34 @@ import * as vscode from 'vscode';
 import { AtunAgentState } from './agent-state';
 import { registerAtunChatParticipant } from './chat-participant';
 import { AtunShellViewProvider } from './chat-view';
+import { detectHostSupport } from './host-support';
 import { WorkspaceTools, type WorkspaceActionResult } from './workspace-tools';
 
 const SHELL_CONTAINER_COMMAND = 'workbench.view.extension.atunAgentSidebar';
 const CHAT_QUERY = '@atun ';
 
 export function activate(context: vscode.ExtensionContext): void {
+	const hostSupport = detectHostSupport();
 	const state = new AtunAgentState(context);
 	const tools = new WorkspaceTools(state);
-	const shellViewProvider = new AtunShellViewProvider(context, state);
-	const participant = registerAtunChatParticipant(context, state, tools);
+	const shellViewProvider = new AtunShellViewProvider(context, state, hostSupport);
 
 	context.subscriptions.push(
-		participant,
 		vscode.window.registerWebviewViewProvider(AtunShellViewProvider.viewType, shellViewProvider, {
 			webviewOptions: { retainContextWhenHidden: true },
 		}),
 		state.onDidChange(() => shellViewProvider.refresh()),
 	);
 
+	if (hostSupport.isSupported) {
+		context.subscriptions.push(registerAtunChatParticipant(context, state, tools));
+	} else {
+		console.warn(`[Atun Agent] Native chat integration disabled: ${hostSupport.reason ?? 'unsupported host'}`);
+	}
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand('atun-agent.openChat', async () => {
-			await safeOpenNativeChat();
+			await safeOpenNativeChat(hostSupport);
 		}),
 		vscode.commands.registerCommand('atun-agent.focusSidebar', async () => {
 			await safeFocusSidebar();
@@ -92,16 +98,20 @@ async function addContextFiles(state: AtunAgentState): Promise<void> {
 	void vscode.window.showInformationMessage(`Added ${picked.length} file(s) to Atun context.`);
 }
 
-async function safeOpenNativeChat(): Promise<void> {
+async function safeOpenNativeChat(hostSupport: ReturnType<typeof detectHostSupport>): Promise<void> {
 	try {
-		await openNativeChat();
+		await openNativeChat(hostSupport);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Cannot open Atun chat.';
 		void vscode.window.showErrorMessage(message);
 	}
 }
 
-async function openNativeChat(): Promise<void> {
+async function openNativeChat(hostSupport: ReturnType<typeof detectHostSupport>): Promise<void> {
+	if (!hostSupport.isSupported) {
+		throw new Error(`${hostSupport.reason ?? 'Native chat is unavailable.'} Use VS Code 1.110+ with Chat enabled and a compatible chat model provider.`);
+	}
+
 	const opened = (await tryExecute('workbench.action.chat.open', { query: CHAT_QUERY, isPartialQuery: true }))
 		|| (await tryExecute('workbench.action.chat.open', CHAT_QUERY))
 		|| (await tryExecute('workbench.action.chat.open'))

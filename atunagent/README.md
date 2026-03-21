@@ -17,6 +17,12 @@ Repo: https://github.com/capriadev/atun-agent
 
 ## Quick start
 
+Requirements:
+
+- VS Code `1.110+`
+- Native Chat enabled in the editor host
+- A compatible chat model provider available in VS Code Chat
+
 - Open chat: `Ctrl+Alt+A` (primary), `Ctrl+Shift+A` (secondary)
 - In chat, use `@atun`
 - Slash commands:
@@ -69,6 +75,11 @@ npm install
 npm run compile
 npm test
 ```
+
+## Troubleshooting
+
+- If the sidebar opens but native agent mode is unavailable, the editor host is missing the VS Code Chat API, the Language Model API, or a compatible chat model provider.
+- If installation shows `Oracle Java SE Language Server exited with 10`, that message is unrelated to this TypeScript extension and usually comes from another installed Java extension.
 
 ## Local VSIX packaging
 

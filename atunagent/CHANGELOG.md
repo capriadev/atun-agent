@@ -2,6 +2,16 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.0.1] - 2026-03-21
+
+### Fixed
+- Prevented extension activation from failing on editor hosts that do not expose the native VS Code Chat or Language Model APIs.
+- Prevented the sidebar webview from rendering as an empty shell when chat models are unavailable or model discovery fails.
+
+### Added
+- Native host diagnostics in the sidebar for unsupported hosts and missing chat models.
+- Clearer open-chat error message when native agent integration is not available.
+
 ## [2.0.0] - 2026-03-21
 
 ### Added

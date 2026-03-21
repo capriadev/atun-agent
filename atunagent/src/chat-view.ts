@@ -1,6 +1,7 @@
 import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { AtunAgentState } from './agent-state';
+import type { HostSupport } from './host-support';
 import type { AgentMode } from './types';
 
 interface ModelOption {
@@ -25,10 +26,12 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
 
 	private view: vscode.WebviewView | undefined;
 	private models: ModelOption[] = [];
+	private modelsError: string | undefined;
 
 	public constructor(
 		private readonly context: vscode.ExtensionContext,
 		private readonly state: AtunAgentState,
+		private readonly hostSupport: HostSupport,
 	) {}
 
 	public async resolveWebviewView(view: vscode.WebviewView): Promise<void> {
@@ -92,11 +95,27 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
 	}
 
 	private async loadModels(): Promise<void> {
-		const models = await vscode.lm.selectChatModels({});
-		this.models = models.map((model) => ({
-			id: model.id,
-			label: `${model.name} (${model.vendor}/${model.family})`,
-		}));
+		if (!this.hostSupport.hasLanguageModelApi) {
+			this.models = [];
+			this.modelsError = 'No native language model API was detected in this editor host.';
+			return;
+		}
+
+		try {
+			const models = await vscode.lm.selectChatModels({});
+			this.models = models.map((model) => ({
+				id: model.id,
+				label: `${model.name} (${model.vendor}/${model.family})`,
+			}));
+			this.modelsError = this.models.length > 0
+				? undefined
+				: 'No chat models are currently available. Install or enable a compatible provider.';
+		} catch (error) {
+			this.models = [];
+			this.modelsError = error instanceof Error
+				? error.message
+				: 'Failed to enumerate chat models in this editor host.';
+		}
 
 		const selected = this.state.modelOverrideId;
 		if (!selected && this.models[0]) {
@@ -116,6 +135,9 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
 			agentMode: this.state.agentMode,
 			modelId,
 			models: this.models,
+			hostSupported: this.hostSupport.isSupported,
+			hostReason: this.hostSupport.reason ?? '',
+			modelsError: this.modelsError ?? '',
 			contextCount: this.state.contextFileUris.length,
 			isRunning: this.state.hasRunningRequest(),
 		});
@@ -182,12 +204,31 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       gap: 4px;
       color: var(--vscode-descriptionForeground);
     }
+    .note {
+      border: 1px solid var(--vscode-inputValidation-warningBorder);
+      background: color-mix(in srgb, var(--vscode-editorWarning-foreground) 10%, transparent);
+      border-radius: 6px;
+      padding: 8px;
+      color: var(--vscode-foreground);
+      display: none;
+      gap: 4px;
+    }
+    .note strong {
+      color: var(--vscode-editorWarning-foreground);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
     .tiny { font-size: 11px; }
   </style>
 </head>
 <body>
   <div class="header"><img src="${logo}" alt="logo">ATUN AGENT</div>
   <button id="openChat" class="primary">Open Native Chat (@atun)</button>
+  <div class="note tiny" id="note">
+    <strong>Native agent unavailable</strong>
+    <div id="noteText"></div>
+  </div>
   <div class="row">
     <button id="addContext">+ Context Files</button>
     <button id="clearContext">Clear Context</button>
@@ -212,12 +253,25 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
 
   <script nonce="${nonce}">
     const vscode = acquireVsCodeApi();
-    const state = { accessMode: 'isolated', agentMode: 'ask', modelId: '', models: [], contextCount: 0, isRunning: false };
+    const state = {
+      accessMode: 'isolated',
+      agentMode: 'ask',
+      modelId: '',
+      models: [],
+      hostSupported: true,
+      hostReason: '',
+      modelsError: '',
+      contextCount: 0,
+      isRunning: false
+    };
 
     const status = document.getElementById('status');
     const access = document.getElementById('access');
     const mode = document.getElementById('mode');
     const model = document.getElementById('model');
+    const note = document.getElementById('note');
+    const noteText = document.getElementById('noteText');
+    const openChat = document.getElementById('openChat');
 
     function render() {
       access.value = state.accessMode;
@@ -232,13 +286,27 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       if (state.modelId) {
         model.value = state.modelId;
       }
+      if (state.models.length === 0) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = state.modelsError || 'No chat models available';
+        model.appendChild(option);
+      }
+      model.disabled = state.models.length === 0;
+      openChat.disabled = !state.hostSupported;
+      note.style.display = state.hostSupported && !state.modelsError ? 'none' : 'grid';
+      noteText.textContent = state.hostSupported
+        ? (state.modelsError || 'No compatible chat model provider was detected.')
+        : (state.hostReason || 'Native chat APIs are unavailable in this editor host.');
       status.innerHTML = [
+        'Native agent: ' + (state.hostSupported ? 'available' : 'unavailable'),
+        'Models: ' + state.models.length,
         'Context files: ' + state.contextCount,
         'Active response: ' + (state.isRunning ? 'running' : 'idle'),
       ].join('<br/>');
     }
 
-    document.getElementById('openChat').addEventListener('click', () => vscode.postMessage({ type: 'openChat' }));
+    openChat.addEventListener('click', () => vscode.postMessage({ type: 'openChat' }));
     document.getElementById('addContext').addEventListener('click', () => vscode.postMessage({ type: 'addContextFiles' }));
     document.getElementById('clearContext').addEventListener('click', () => vscode.postMessage({ type: 'clearContext' }));
     document.getElementById('createFile').addEventListener('click', () => vscode.postMessage({ type: 'createFile' }));
