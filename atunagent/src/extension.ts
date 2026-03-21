@@ -1,40 +1,121 @@
 import * as vscode from 'vscode';
 import { AtunAgentState } from './agent-state';
-import { AtunChatViewProvider } from './chat-view';
+import { registerAtunChatParticipant } from './chat-participant';
+import { AtunShellViewProvider } from './chat-view';
+import { WorkspaceTools, type WorkspaceActionResult } from './workspace-tools';
 
-export function activate(context: vscode.ExtensionContext) {
+const SHELL_CONTAINER_COMMAND = 'workbench.view.extension.atunAgentSidebar';
+const CHAT_QUERY = '@atun ';
+
+export function activate(context: vscode.ExtensionContext): void {
 	const state = new AtunAgentState(context);
-	const chatViewProvider = new AtunChatViewProvider(context, state);
+	const tools = new WorkspaceTools(state);
+	const shellViewProvider = new AtunShellViewProvider(context, state);
+	const participant = registerAtunChatParticipant(context, state, tools);
 
 	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(AtunChatViewProvider.viewType, chatViewProvider, {
+		participant,
+		vscode.window.registerWebviewViewProvider(AtunShellViewProvider.viewType, shellViewProvider, {
 			webviewOptions: { retainContextWhenHidden: true },
 		}),
-		state.onDidChange(() => chatViewProvider.refresh()),
+		state.onDidChange(() => shellViewProvider.refresh()),
 	);
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('atun-agent.openChat', async () => {
-			await safeFocusSidebar();
+			await safeOpenNativeChat();
 		}),
 		vscode.commands.registerCommand('atun-agent.focusSidebar', async () => {
 			await safeFocusSidebar();
 		}),
 		vscode.commands.registerCommand('atun-agent.stopResponse', async () => {
 			if (!state.stopActiveRequest()) {
-				void vscode.window.showInformationMessage('No hay respuesta activa para pausar.');
+				void vscode.window.showInformationMessage('No active Atun response to stop.');
 			}
+		}),
+		vscode.commands.registerCommand('atun-agent.addContextFiles', async () => {
+			await addContextFiles(state);
+		}),
+		vscode.commands.registerCommand('atun-agent.workspace.createFile', async () => {
+			const pathArg = await vscode.window.showInputBox({
+				title: 'Atun Agent',
+				prompt: 'Create file (relative workspace path)',
+				placeHolder: 'src/new-file.ts',
+			});
+			if (!pathArg) {
+				return;
+			}
+			await showActionResult(await tools.createFile(pathArg, '', 'command'));
+		}),
+		vscode.commands.registerCommand('atun-agent.workspace.deleteFile', async () => {
+			const listing = await tools.listFiles('**/*');
+			if (!listing.lines || listing.lines.length === 0) {
+				void vscode.window.showInformationMessage('No workspace files available to delete.');
+				return;
+			}
+			const picked = await vscode.window.showQuickPick(listing.lines.slice(0, 200), {
+				title: 'Atun Agent',
+				placeHolder: 'Pick file to delete (to trash)',
+			});
+			if (!picked) {
+				return;
+			}
+			await showActionResult(await tools.deleteFileToTrash(picked, 'command'));
+		}),
+		vscode.commands.registerCommand('atun-agent.workspace.runTerminal', async () => {
+			const commandText = await vscode.window.showInputBox({
+				title: 'Atun Agent',
+				prompt: 'Terminal command',
+				placeHolder: 'npm test',
+			});
+			if (!commandText) {
+				return;
+			}
+			await showActionResult(await tools.runTerminalCommand(commandText, 'command'));
 		}),
 	);
 
 	void revealOnFirstActivation(context);
 }
 
+async function addContextFiles(state: AtunAgentState): Promise<void> {
+	const picked = await vscode.window.showOpenDialog({
+		canSelectMany: true,
+		canSelectFiles: true,
+		canSelectFolders: false,
+		openLabel: 'Add to Atun context',
+	});
+	if (!picked || picked.length === 0) {
+		return;
+	}
+	await state.addContextFiles(picked);
+	void vscode.window.showInformationMessage(`Added ${picked.length} file(s) to Atun context.`);
+}
+
+async function safeOpenNativeChat(): Promise<void> {
+	try {
+		await openNativeChat();
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Cannot open Atun chat.';
+		void vscode.window.showErrorMessage(message);
+	}
+}
+
+async function openNativeChat(): Promise<void> {
+	const opened = (await tryExecute('workbench.action.chat.open', { query: CHAT_QUERY, isPartialQuery: true }))
+		|| (await tryExecute('workbench.action.chat.open', CHAT_QUERY))
+		|| (await tryExecute('workbench.action.chat.open'))
+		|| (await tryExecute('chat.open', CHAT_QUERY));
+	if (!opened) {
+		throw new Error('Native chat view is not available. Verify VS Code Chat is enabled.');
+	}
+}
+
 async function safeFocusSidebar(): Promise<void> {
 	try {
 		await focusSidebar();
 	} catch (error) {
-		const message = error instanceof Error ? error.message : 'No se pudo abrir la vista de Atun Agent.';
+		const message = error instanceof Error ? error.message : 'Cannot focus Atun sidebar.';
 		void vscode.window.showErrorMessage(message);
 	}
 }
@@ -46,15 +127,15 @@ async function focusSidebar(): Promise<void> {
 
 	if (preferSecondary) {
 		await tryExecute('workbench.action.toggleSecondarySideBarVisibility');
-		await tryExecute('workbench.action.moveViewContainerToSecondarySideBar', 'workbench.view.extension.atunAgentSidebar');
+		await tryExecute('workbench.action.moveViewContainerToSecondarySideBar', SHELL_CONTAINER_COMMAND);
 	}
 
-	const opened = (await tryExecute('workbench.action.openView', AtunChatViewProvider.viewType))
-		|| (await tryExecute('workbench.view.extension.atunAgentSidebar'))
-		|| (await tryExecute('workbench.action.openView', 'workbench.view.extension.atunAgentSidebar'));
+	const opened = (await tryExecute('workbench.action.openView', AtunShellViewProvider.viewType))
+		|| (await tryExecute(SHELL_CONTAINER_COMMAND))
+		|| (await tryExecute('workbench.action.openView', SHELL_CONTAINER_COMMAND));
 
 	if (!opened) {
-		throw new Error('Atun Agent view no disponible. Reinicia VS Code o reinstala la extension.');
+		throw new Error('Atun Agent sidebar unavailable. Reload VS Code and reinstall extension.');
 	}
 }
 
@@ -67,8 +148,8 @@ async function revealOnFirstActivation(context: vscode.ExtensionContext): Promis
 	}
 
 	const key = 'atunAgent.didAutoReveal';
-	const didAutoReveal = context.globalState.get<boolean>(key, false);
-	if (didAutoReveal) {
+	const alreadyRevealed = context.globalState.get<boolean>(key, false);
+	if (alreadyRevealed) {
 		return;
 	}
 
@@ -76,15 +157,21 @@ async function revealOnFirstActivation(context: vscode.ExtensionContext): Promis
 	await context.globalState.update(key, true);
 }
 
+async function showActionResult(result: WorkspaceActionResult): Promise<void> {
+	if (result.ok) {
+		void vscode.window.showInformationMessage(result.message);
+		return;
+	}
+	void vscode.window.showErrorMessage(result.message);
+}
+
 async function tryExecute(command: string, ...args: unknown[]): Promise<boolean> {
 	try {
 		await vscode.commands.executeCommand(command, ...args);
 		return true;
 	} catch {
-		// Best effort only.
 		return false;
 	}
 }
 
-export function deactivate() {
-}
+export function deactivate(): void {}

@@ -1,43 +1,68 @@
 # Atun Agent
 
-Atun Agent es un **chat agent para VS Code en sidebar** pensado para flujo de desarrollo real: prompt + contexto de archivos + modos de trabajo + control de respuesta + estimacion de tokens.
+Atun Agent is a **native VS Code chat participant** (`@atun`) with a minimal sidebar launcher.
 
 Repo: https://github.com/capriadev/atun-agent
 
-## Que lo diferencia
+## What it does
 
-- UI de chat persistente en barra lateral (historial + composer inferior).
-- Adjuntos directos con `#` (archivos/imagenes).
-- Slash skills con `/skills` y modos de trabajo (`ask`, `plan`, `git`, `docs`).
-- Selectores de sesion:
-  - Access: `isolated` / `full`
-  - Model (VS Code LM API)
-  - Thinking: `normal` / `high`
-- Control de ejecucion en vivo (`play/pause`) para enviar o frenar respuesta activa.
-- Conteo de tokens por modelo (`model.countTokens`) sobre:
-  - input
-  - adjuntos
-  - snapshot de proyecto
-  - imagenes (estimacion por descriptor)
+- Native chat integration via VS Code Chat (`@atun`)
+- Minimal shell view in sidebar for quick actions and state
+- Workspace tools from chat with explicit confirmation:
+  - list/read/create/update/delete files
+  - run integrated terminal commands
+- Access modes:
+  - `isolated`: blocks mutating actions
+  - `full`: enables mutating actions after confirmation
 
-## Atajos y comandos
+## Quick start
 
-- **Abrir agente**:
-  - `Ctrl+Shift+A` (Win/Linux)
-  - `Ctrl+Alt+A` (fallback Win/Linux)
-  - `Cmd+Shift+A` / `Cmd+Alt+A` (macOS)
-- Command Palette:
-  - `Atun Agent: Open Chat`
-  - `Atun Agent: Focus Sidebar`
-  - `Atun Agent: Stop Response`
+- Open chat: `Ctrl+Alt+A` (primary), `Ctrl+Shift+A` (secondary)
+- In chat, use `@atun`
+- Slash commands:
+  - `/list`
+  - `/read`
+  - `/create`
+  - `/update`
+  - `/delete`
+  - `/terminal`
 
-## Configuracion
+Examples:
 
-- `atunAgent.accessMode`: `isolated` o `full`
-- `atunAgent.preferSecondarySideBar`: intenta ubicar vista en barra secundaria
-- `atunAgent.autoRevealOnStartup`: auto-abrir Atun Agent en primera activacion
+```text
+@atun /list src/**/*
+@atun /read README.md
+@atun /create src/new-file.ts
+```
 
-## Desarrollo local
+```ts
+export const ok = true;
+```
+
+```text
+@atun /terminal npm test
+```
+
+## Commands
+
+- `Atun Agent: Open Chat`
+- `Atun Agent: Focus Sidebar`
+- `Atun Agent: Stop Response`
+- `Atun Agent: Add Context Files`
+- `Atun Agent: Create File`
+- `Atun Agent: Delete File`
+- `Atun Agent: Run Terminal Command`
+
+## Configuration
+
+- `atunAgent.accessMode`: `isolated` | `full`
+- `atunAgent.agentMode`: `ask` | `plan` | `git` | `docs`
+- `atunAgent.preferSecondarySideBar`: prefer secondary sidebar
+- `atunAgent.autoRevealOnStartup`: auto-open sidebar on first activation
+- `atunAgent.workspace.requireConfirm`: require explicit confirmation
+- `atunAgent.workspace.deleteMode`: `trash`
+
+## Development
 
 ```bash
 npm install
@@ -45,28 +70,16 @@ npm run compile
 npm test
 ```
 
-## Empaquetado local (VSIX)
+## Local VSIX packaging
 
-Desde la raiz del repo:
+From repository root:
 
 ```bash
 npm run package:local
 ```
 
-Salida:
+Output:
 
 ```text
 packages/v{version}/atun-agent-{version}.vsix
 ```
-
-Instalacion local:
-
-```bash
-code --install-extension packages/v1.1.2/atun-agent-1.1.2.vsix
-```
-
-## Troubleshooting rapido
-
-- Si `Atun Agent: Open Chat` no abre, usar `Atun Agent: Focus Sidebar`.
-- Si no aparece en barra secundaria, VS Code hace fallback a barra primaria segun disponibilidad.
-- Si no hay modelos en selector, verificar acceso a modelos en VS Code LM API (Copilot/Provider).

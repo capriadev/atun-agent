@@ -2,6 +2,30 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.0.0] - 2026-03-21
+
+### Added
+- Native chat participant `@atun` with slash commands:
+  - `/list`, `/read`, `/create`, `/update`, `/delete`, `/terminal`
+- Quick action commands:
+  - `Atun Agent: Add Context Files`
+  - `Atun Agent: Create File`
+  - `Atun Agent: Delete File`
+  - `Atun Agent: Run Terminal Command`
+- Workspace operations module with guarded actions and access-mode checks.
+- Package icon (`assets/icons/logo/atunagent-icon.png`) for extension details.
+
+### Changed
+- Main UX migrated from webview chat composer to native VS Code chat integration.
+- Sidebar converted to minimal launcher/status shell.
+- `Ctrl+Alt+A` is now the primary open-chat shortcut (`Ctrl+Shift+A` remains as fallback).
+- Version bumped to `2.0.0`.
+
+### Security
+- Mutating operations (create/update/delete/terminal) require explicit confirmation by default.
+- `isolated` mode blocks mutating operations.
+- Delete strategy defaults to trash (`useTrash: true`).
+
 ## [1.1.2] - 2026-03-21
 
 ### Fixed

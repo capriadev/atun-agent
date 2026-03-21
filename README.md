@@ -2,33 +2,39 @@
 
 Repo: https://github.com/capriadev/atun-agent
 
-## Setup rapido (local)
+## Local setup
 
 ```bash
 npm run install:ext
 npm run compile
 ```
 
-## Generar VSIX local por version
+## Run tests
+
+```bash
+npm run test
+```
+
+## Build local VSIX by version
 
 ```bash
 npm run package:local
 ```
 
-Esto genera:
+Output format:
 
 ```text
 packages/v{version}/atun-agent-{version}.vsix
 ```
 
-Ejemplo actual:
+Current expected output:
 
 ```text
-packages/v1.1.2/atun-agent-1.1.2.vsix
+packages/v2.0.0/atun-agent-2.0.0.vsix
 ```
 
-## Instalar VSIX local
+## Install locally
 
 ```bash
-code --install-extension packages/v1.1.2/atun-agent-1.1.2.vsix
+code --install-extension packages/v2.0.0/atun-agent-2.0.0.vsix
 ```
