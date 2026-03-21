@@ -3,39 +3,55 @@ import { AtunAgentState } from './agent-state';
 import { registerAtunChatParticipant } from './chat-participant';
 import { AtunShellViewProvider } from './chat-view';
 import { detectHostSupport } from './host-support';
+import { LocalDatabase } from './local-database';
+import { ProviderRegistry } from './provider-registry';
+import { SecretsService } from './secrets-service';
+import { SidebarViewModel } from './sidebar-view-model';
 import { WorkspaceTools, type WorkspaceActionResult } from './workspace-tools';
 
 const SHELL_CONTAINER_COMMAND = 'workbench.view.extension.atunAgentSidebar';
 const CHAT_QUERY = '@atun ';
 
-export function activate(context: vscode.ExtensionContext): void {
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
 	const hostSupport = detectHostSupport();
 	const state = new AtunAgentState(context);
 	const tools = new WorkspaceTools(state);
-	const shellViewProvider = new AtunShellViewProvider(context, state, hostSupport);
+	const database = new LocalDatabase({
+		storagePath: context.globalStorageUri.fsPath,
+		extensionPath: context.extensionPath,
+	});
+	await database.initialize();
+
+	const secrets = new SecretsService(context);
+	const providers = new ProviderRegistry(database, secrets);
+	const sidebarViewModel = new SidebarViewModel(database, providers, hostSupport.isSupported);
+	await sidebarViewModel.initialize();
+
+	const shellViewProvider = new AtunShellViewProvider(context, sidebarViewModel, hostSupport);
 
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(AtunShellViewProvider.viewType, shellViewProvider, {
 			webviewOptions: { retainContextWhenHidden: true },
 		}),
-		state.onDidChange(() => shellViewProvider.refresh()),
+		sidebarViewModel.onDidChange(() => shellViewProvider.refresh()),
 	);
 
-	if (hostSupport.isSupported) {
-		context.subscriptions.push(registerAtunChatParticipant(context, state, tools));
-	} else {
-		console.warn(`[Atun Agent] Native chat integration disabled: ${hostSupport.reason ?? 'unsupported host'}`);
+	if (hostSupport.hasChatParticipantApi) {
+		context.subscriptions.push(registerAtunChatParticipant(context, database));
 	}
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('atun-agent.openChat', async () => {
+			await safeFocusSidebar();
+		}),
+		vscode.commands.registerCommand('atun-agent.openNativeChat', async () => {
 			await safeOpenNativeChat(hostSupport);
 		}),
 		vscode.commands.registerCommand('atun-agent.focusSidebar', async () => {
 			await safeFocusSidebar();
 		}),
 		vscode.commands.registerCommand('atun-agent.stopResponse', async () => {
-			if (!state.stopActiveRequest()) {
+			if (!sidebarViewModel.stopStreaming()) {
 				void vscode.window.showInformationMessage('No active Atun response to stop.');
 			}
 		}),
@@ -81,7 +97,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		}),
 	);
 
-	void revealOnFirstActivation(context);
+	await revealOnFirstActivation(context);
 }
 
 async function addContextFiles(state: AtunAgentState): Promise<void> {
@@ -102,14 +118,14 @@ async function safeOpenNativeChat(hostSupport: ReturnType<typeof detectHostSuppo
 	try {
 		await openNativeChat(hostSupport);
 	} catch (error) {
-		const message = error instanceof Error ? error.message : 'Cannot open Atun chat.';
+		const message = error instanceof Error ? error.message : 'Cannot open Atun native chat.';
 		void vscode.window.showErrorMessage(message);
 	}
 }
 
 async function openNativeChat(hostSupport: ReturnType<typeof detectHostSupport>): Promise<void> {
-	if (!hostSupport.isSupported) {
-		throw new Error(`${hostSupport.reason ?? 'Native chat is unavailable.'} Use VS Code 1.110+ with Chat enabled and a compatible chat model provider.`);
+	if (!hostSupport.hasChatParticipantApi) {
+		throw new Error(`${hostSupport.reason ?? 'Native chat is unavailable.'} Use a compatible VS Code host with Chat enabled.`);
 	}
 
 	const opened = (await tryExecute('workbench.action.chat.open', { query: CHAT_QUERY, isPartialQuery: true }))

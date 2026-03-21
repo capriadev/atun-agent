@@ -30,11 +30,11 @@ packages/v{version}/atun-agent-{version}.vsix
 Current expected output:
 
 ```text
-packages/v2.0.1/atun-agent-2.0.1.vsix
+packages/v2.1.0/atun-agent-2.1.0.vsix
 ```
 
 ## Install locally
 
 ```bash
-code --install-extension packages/v2.0.1/atun-agent-2.0.1.vsix
+code --install-extension packages/v2.1.0/atun-agent-2.1.0.vsix
 ```

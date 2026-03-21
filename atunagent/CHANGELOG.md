@@ -2,6 +2,25 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.1.0] - 2026-03-21
+
+### Added
+- Local SQLite persistence for provider connections, enabled models, chat sessions and chat messages.
+- SecretStorage-backed API key storage for provider credentials.
+- Internal provider registry and first Groq adapter with model discovery plus streaming chat completions.
+- New onboarding flow in the sidebar:
+  - logo screen
+  - provider picker
+  - Groq configuration
+  - local chat UI
+- Local chat experience with connection selector, model selector, streaming responses and new-chat action.
+- Automated test coverage for SQLite initialization and connection persistence.
+
+### Changed
+- Main UX now uses the sidebar chat as the primary surface instead of relying on native language model APIs.
+- `Atun Agent: Open Chat` now focuses the Atun sidebar.
+- Native `@atun` chat participant now acts as a lightweight bridge that redirects setup/use back to the sidebar.
+
 ## [2.0.1] - 2026-03-21
 
 ### Fixed

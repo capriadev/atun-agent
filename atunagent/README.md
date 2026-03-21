@@ -1,53 +1,33 @@
 # Atun Agent
 
-Atun Agent is a **native VS Code chat participant** (`@atun`) with a minimal sidebar launcher.
+Atun Agent is a **local-first VS Code agent sidebar** with Groq connectivity, SQLite persistence and a minimal native chat bridge.
 
 Repo: https://github.com/capriadev/atun-agent
 
 ## What it does
 
-- Native chat integration via VS Code Chat (`@atun`)
-- Minimal shell view in sidebar for quick actions and state
-- Workspace tools from chat with explicit confirmation:
-  - list/read/create/update/delete files
-  - run integrated terminal commands
-- Access modes:
-  - `isolated`: blocks mutating actions
-  - `full`: enables mutating actions after confirmation
+- Local sidebar onboarding to connect providers
+- Groq API configuration with model discovery
+- SQLite persistence for local connections, sessions and messages
+- SecretStorage for API keys
+- Simple local chat with selectable model and streaming responses
+- Native `@atun` bridge that points setup back to the sidebar when needed
 
 ## Quick start
 
 Requirements:
 
 - VS Code `1.110+`
-- Native Chat enabled in the editor host
-- A compatible chat model provider available in VS Code Chat
+- Internet access to validate Groq and send chat requests
+- A Groq API key
 
-- Open chat: `Ctrl+Alt+A` (primary), `Ctrl+Shift+A` (secondary)
-- In chat, use `@atun`
-- Slash commands:
-  - `/list`
-  - `/read`
-  - `/create`
-  - `/update`
-  - `/delete`
-  - `/terminal`
-
-Examples:
-
-```text
-@atun /list src/**/*
-@atun /read README.md
-@atun /create src/new-file.ts
-```
-
-```ts
-export const ok = true;
-```
-
-```text
-@atun /terminal npm test
-```
+1. Open Atun Agent from the activity bar or run `Atun Agent: Open Chat`
+2. Click `Anadir API / API Connect`
+3. Choose `Groq`
+4. Enter a display name and your API key
+5. Wait for the available models to load
+6. Enable at least one model and click `Aceptar`
+7. Start chatting from the sidebar
 
 ## Commands
 
@@ -78,7 +58,8 @@ npm test
 
 ## Troubleshooting
 
-- If the sidebar opens but native agent mode is unavailable, the editor host is missing the VS Code Chat API, the Language Model API, or a compatible chat model provider.
+- If the sidebar does not list Groq models, verify the API key and confirm the editor can reach `https://api.groq.com`.
+- If native `@atun` opens but tells you to finish setup in the sidebar, that is expected in this release.
 - If installation shows `Oracle Java SE Language Server exited with 10`, that message is unrelated to this TypeScript extension and usually comes from another installed Java extension.
 
 ## Local VSIX packaging
