@@ -2,6 +2,22 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [1.1.2] - 2026-03-21
+
+### Fixed
+- `Atun Agent: Open Chat` now opens via robust multi-command fallback (`openView` + container fallback) to avoid `command ... not found` errors.
+- Added safer error handling when focusing sidebar.
+
+### Added
+- Extra keybinding fallback for opening chat:
+  - `Ctrl+Alt+A` (Windows/Linux), `Cmd+Alt+A` (macOS).
+- New setting: `atunAgent.autoRevealOnStartup`.
+
+### Changed
+- Sidebar icon switched to a higher-contrast asset (`ghost-chat.svg`) for better visibility.
+- Extension description improved to better reflect real capabilities.
+- Documentation expanded with troubleshooting and clearer feature overview.
+
 ## [1.1.1] - 2026-03-21
 
 ### Added

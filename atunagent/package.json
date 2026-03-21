@@ -2,8 +2,8 @@
   "name": "atun-agent",
   "publisher": "capriadev",
   "displayName": "Atun Agent",
-  "description": "Native VS Code chat agent",
-  "version": "1.1.1",
+  "description": "Sidebar AI chat agent for coding workflows with files, skills, selectors and token estimation",
+  "version": "1.1.2",
   "author": {
     "name": "capriadev",
     "url": "https://github.com/capriadev"
@@ -57,6 +57,12 @@
         "key": "ctrl+shift+a",
         "mac": "cmd+shift+a",
         "when": "editorTextFocus || sideBarFocus || panelFocus || terminalFocus"
+      },
+      {
+        "command": "atun-agent.openChat",
+        "key": "ctrl+alt+a",
+        "mac": "cmd+alt+a",
+        "when": "editorTextFocus || sideBarFocus || panelFocus || terminalFocus"
       }
     ],
     "viewsContainers": {
@@ -64,7 +70,7 @@
         {
           "id": "atunAgentSidebar",
           "title": "Atun Agent",
-          "icon": "assets/icons/logo/atunagent.svg"
+          "icon": "assets/icons/ghost-chat.svg"
         }
       ]
     },
@@ -93,6 +99,11 @@
           "type": "boolean",
           "default": true,
           "description": "Try to focus Atun Agent in secondary side bar when possible."
+        },
+        "atunAgent.autoRevealOnStartup": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-open Atun Agent sidebar on first activation."
         }
       }
     }

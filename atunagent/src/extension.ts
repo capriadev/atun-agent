@@ -15,10 +15,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('atun-agent.openChat', async () => {
-			await focusSidebar();
+			await safeFocusSidebar();
 		}),
 		vscode.commands.registerCommand('atun-agent.focusSidebar', async () => {
-			await focusSidebar();
+			await safeFocusSidebar();
 		}),
 		vscode.commands.registerCommand('atun-agent.stopResponse', async () => {
 			if (!state.stopActiveRequest()) {
@@ -26,6 +26,17 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}),
 	);
+
+	void revealOnFirstActivation(context);
+}
+
+async function safeFocusSidebar(): Promise<void> {
+	try {
+		await focusSidebar();
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'No se pudo abrir la vista de Atun Agent.';
+		void vscode.window.showErrorMessage(message);
+	}
 }
 
 async function focusSidebar(): Promise<void> {
@@ -38,14 +49,40 @@ async function focusSidebar(): Promise<void> {
 		await tryExecute('workbench.action.moveViewContainerToSecondarySideBar', 'workbench.view.extension.atunAgentSidebar');
 	}
 
-	await vscode.commands.executeCommand('workbench.view.extension.atunAgentSidebar');
+	const opened = (await tryExecute('workbench.action.openView', AtunChatViewProvider.viewType))
+		|| (await tryExecute('workbench.view.extension.atunAgentSidebar'))
+		|| (await tryExecute('workbench.action.openView', 'workbench.view.extension.atunAgentSidebar'));
+
+	if (!opened) {
+		throw new Error('Atun Agent view no disponible. Reinicia VS Code o reinstala la extension.');
+	}
 }
 
-async function tryExecute(command: string, ...args: unknown[]): Promise<void> {
+async function revealOnFirstActivation(context: vscode.ExtensionContext): Promise<void> {
+	const shouldAutoReveal = vscode.workspace
+		.getConfiguration('atunAgent')
+		.get<boolean>('autoRevealOnStartup', true);
+	if (!shouldAutoReveal) {
+		return;
+	}
+
+	const key = 'atunAgent.didAutoReveal';
+	const didAutoReveal = context.globalState.get<boolean>(key, false);
+	if (didAutoReveal) {
+		return;
+	}
+
+	await safeFocusSidebar();
+	await context.globalState.update(key, true);
+}
+
+async function tryExecute(command: string, ...args: unknown[]): Promise<boolean> {
 	try {
 		await vscode.commands.executeCommand(command, ...args);
+		return true;
 	} catch {
 		// Best effort only.
+		return false;
 	}
 }
 

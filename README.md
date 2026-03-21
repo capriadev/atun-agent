@@ -24,11 +24,11 @@ packages/v{version}/atun-agent-{version}.vsix
 Ejemplo actual:
 
 ```text
-packages/v1.1.1/atun-agent-1.1.1.vsix
+packages/v1.1.2/atun-agent-1.1.2.vsix
 ```
 
 ## Instalar VSIX local
 
 ```bash
-code --install-extension packages/v1.1.1/atun-agent-1.1.1.vsix
+code --install-extension packages/v1.1.2/atun-agent-1.1.2.vsix
 ```
