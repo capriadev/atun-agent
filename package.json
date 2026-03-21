@@ -1,0 +1,14 @@
+{
+  "name": "capri-chat-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Workspace wrapper for Capri Chat VS Code extension",
+  "scripts": {
+    "install:ext": "npm --prefix atunagent run install",
+    "uninstall:ext": "npm --prefix atunagent run uninstall",
+    "compile": "npm --prefix atunagent run run compile",
+    "watch": "npm --prefix atunagent run run watch",
+    "test": "npm --prefix atunagent run run test",
+    "package": "npm --prefix atunagent run run package"
+  }
+}
