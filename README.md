@@ -1,27 +1,28 @@
-# Atun Agent
+# Atun Agent Workspace
 
-Atun Agent es un agente de chat nativo para VS Code diseñado para una integración profunda y soporte multi-proveedor. Gestiona múltiples agentes de IA y sistemas de cuentas (Pagas, Gratuitas, GitHub) a través de una base de datos local, contando con un seguimiento preciso de tokens y respuestas conscientes del contexto.
-
-> [!IMPORTANT]
-> **Trabajo en Progreso**: Este proyecto se encuentra actualmente en una etapa inicial de desarrollo. Aún no hay una versión funcional estable disponible.
-
+Atun Agent es una extension de VS Code con UI de chat en sidebar (estilo agentes tipo Codex/Claude/Roo), con composer inferior, adjuntos, slash skills, selectores y conteo de tokens.
 
 ## Proyecto activo
 
-- `atunagent/`: extension TypeScript con chat multi-proveedor.
+- `atunagent/`: extension TypeScript principal.
 
-## Comandos desde root
+## Comandos desde la raiz
 
 ```bash
-npm run install:ext 
+npm run install:ext
 npm run compile
 npm run watch
 npm run test
 npm run package
 ```
 
----
+## Estado actual
+
+- UI de agente tipo chat en sidebar (no listado de opciones).
+- Atajo rapido: `Ctrl+Shift+A` / `Cmd+Shift+A`.
+- Selector de acceso: `isolated` y `full`.
+- Conteo de tokens por `model.countTokens(...)` (input, adjuntos, snapshot de proyecto e imagenes).
 
 ## Autor
 
-[![GitHub](https://img.shields.io/badge/GitHub-capriadev-009?style=for-the-badge&logo=github&logoColor=2af1f1)](https://github.com/capriadev)
+[capriadev](https://github.com/capriadev)

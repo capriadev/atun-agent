@@ -1,41 +1,38 @@
 # Atun Agent
 
-Native VS Code agent extension.
+Extension de agente de chat para VS Code con UI propia en sidebar, orientada a flujo tipo Codex/Claude/Roo.
 
-## UX
+## Caracteristicas
 
-- Chat integrado por API oficial (`vscode.chat`) como `@atun`.
-- Acceso rapido: `Ctrl+Shift+A` (Windows/Linux), `Cmd+Shift+A` (macOS).
-- Sidebar nativa con controles de:
+- Vista de chat completa en sidebar (historial + composer inferior).
+- Input con controles:
+  - `#` agregar archivos/imagenes
+  - `/skills` cambiar modo de trabajo
+  - `play/pause` enviar o frenar respuesta
+- Selectores inferiores:
   - Access: `isolated` / `full`
-  - Thinking mode
-  - Model override
-  - Play/Pause (stop de respuesta activa)
-  - Slash `/skills` y hash `#` para archivos
-  - Token breakdown
-- Preferencia de barra lateral secundaria via `atunAgent.preferSecondarySideBar` (fallback: barra lateral principal).
+  - Agent mode: `ask` / `plan` / `git` / `docs`
+  - Model selector (modelos disponibles en VS Code LM API)
+  - Thinking: `normal` / `high`
+- Token counter en tiempo casi real (al escribir y al adjuntar):
+  - input
+  - adjuntos
+  - snapshot de proyecto
+  - imagenes adjuntas (estimacion)
 
-## Token Counter
+## Atajos y comandos
 
-Se calcula en cada request usando `model.countTokens(...)` del modelo activo:
-
-- input prompt
-- referencias `#` (archivos y contexto)
-- snapshot de proyecto
-- referencias de imagen (estimadas por descriptor)
-
-Cuando el modelo seleccionado es GPT/Codex en el provider de OpenAI, se usa su tokenizer oficial via API de VS Code model.
-
-## Commands
-
+- `Ctrl+Shift+A` (Win/Linux) / `Cmd+Shift+A` (macOS): abrir Atun Agent.
 - `Atun Agent: Open Chat`
 - `Atun Agent: Focus Sidebar`
-- `Atun Agent: Set Access Mode`
-- `Atun Agent: Toggle Thinking`
-- `Atun Agent: Set Model Override`
 - `Atun Agent: Stop Response`
 
-## Development
+## Configuracion
+
+- `atunAgent.accessMode`: `isolated` o `full`
+- `atunAgent.preferSecondarySideBar`: intentar ubicar la vista en la barra lateral secundaria
+
+## Desarrollo
 
 ```bash
 npm install

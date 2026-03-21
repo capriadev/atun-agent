@@ -2,7 +2,7 @@
   "name": "atun-agent",
   "displayName": "Atun Agent",
   "description": "Native VS Code chat agent",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "engines": {
     "vscode": "^1.110.0"
   },
@@ -11,8 +11,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onChatParticipant:atun-agent.atun",
-    "onView:atunAgent.controls",
+    "onView:atunAgent.chatView",
     "onCommand:atun-agent.openChat"
   ],
   "main": "./dist/extension.js",
@@ -27,28 +26,8 @@
         "title": "Atun Agent: Focus Sidebar"
       },
       {
-        "command": "atun-agent.setAccessMode",
-        "title": "Atun Agent: Set Access Mode"
-      },
-      {
-        "command": "atun-agent.toggleThinkingMode",
-        "title": "Atun Agent: Toggle Thinking"
-      },
-      {
-        "command": "atun-agent.setModelOverride",
-        "title": "Atun Agent: Set Model Override"
-      },
-      {
         "command": "atun-agent.stopResponse",
         "title": "Atun Agent: Stop Response"
-      },
-      {
-        "command": "atun-agent.openSkillsCommand",
-        "title": "Atun Agent: Open /skills"
-      },
-      {
-        "command": "atun-agent.showHashHint",
-        "title": "Atun Agent: Show # Hint"
       }
     ],
     "keybindings": [
@@ -71,34 +50,12 @@
     "views": {
       "atunAgentSidebar": [
         {
-          "id": "atunAgent.controls",
-          "name": "Atun Agent"
+          "id": "atunAgent.chatView",
+          "name": "Atun Agent",
+          "type": "webview"
         }
       ]
     },
-    "chatParticipants": [
-      {
-        "id": "atun-agent.atun",
-        "name": "atun",
-        "fullName": "Atun Agent",
-        "description": "Editor-integrated coding agent",
-        "isSticky": true,
-        "commands": [
-          {
-            "name": "skills",
-            "description": "List available skills"
-          },
-          {
-            "name": "access",
-            "description": "Set access mode (isolated/full)"
-          },
-          {
-            "name": "thinking",
-            "description": "Toggle reasoning mode"
-          }
-        ]
-      }
-    ],
     "configuration": {
       "title": "Atun Agent",
       "properties": {
