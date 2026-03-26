@@ -2,7 +2,7 @@
 
 ## Active Task
 
-Close the `2.2.0` release line and document the fastest local debug workflow for the extension host.
+Fix the next round of integration issues in the sidebar: keep native toolbar icons theme-correct and remove page-level scrolling so only the chat history scrolls.
 
 ## What Was Being Worked On Before This
 
@@ -25,14 +25,14 @@ The latest completed release changes are:
 ## Decision Made And Why
 
 Decision:
-- keep the release line aligned with the real feature set instead of leaving the redesign under `2.1.1`
-- document both debug entry points:
-  - `F5` / `Run Extension`
-  - direct CLI launch with `code --extensionDevelopmentPath`
+- persist the workflow rule that every change lands as its own commit
+- fix the next UI pass in small recoverable steps:
+  - toolbar icon rendering
+  - page-level scrolling/layout compaction
 
 Why:
-- the packaged artifact and manifest must reflect the actual shipped redesign
-- extension work is much faster when the Extension Development Host flow is explicit and checked into the repo
+- the project is being tuned visually and benefits from frequent rollback points
+- the current shell still has integration regressions that break the native feel
 
 ## Logical Next Step
 

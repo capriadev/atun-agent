@@ -50,6 +50,7 @@
 - Preserve user changes already present in the worktree.
 - Do not remove newly added icons/assets unless they are clearly wrong or explicitly requested.
 - If a feature is intentionally visual-only for now, stubs are acceptable, but they should be clearly wired and named for future implementation.
+- Every intentional change set should end in its own commit so the repo can be restored to the previous safe step quickly.
 
 ## Current Product Direction
 
