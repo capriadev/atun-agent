@@ -159,10 +159,11 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
     }
     body {
       margin: 0;
-      min-height: 100vh;
+      height: 100vh;
       background: var(--atun-bg);
       color: var(--atun-text);
       font: 12px/1.45 var(--atun-font);
+      overflow: hidden;
     }
     button, input, textarea, select {
       font: inherit;
@@ -174,10 +175,20 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
     }
     .screen {
       display: none;
+      height: 100vh;
       min-height: 100vh;
+      overflow: hidden;
     }
     .screen.active {
       display: block;
+    }
+    .screen.onboarding.active {
+      display: grid;
+    }
+    .screen.picker.active,
+    .screen.config.active {
+      display: grid;
+      align-content: start;
     }
     .surface {
       border: 1px solid var(--atun-border);
@@ -252,11 +263,13 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       gap: 10px;
     }
     .picker, .config, .chat-screen {
+      height: 100vh;
       padding: 10px;
     }
     .picker, .config {
       display: grid;
       gap: 12px;
+      grid-template-rows: auto minmax(0, 1fr);
     }
     .toolbar-row {
       display: flex;
@@ -304,6 +317,8 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       padding: 14px;
       display: grid;
       gap: 12px;
+      min-height: 0;
+      overflow: hidden;
     }
     .field {
       display: grid;
@@ -356,7 +371,8 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       width: auto;
     }
     .chat-shell {
-      min-height: calc(100vh - 20px);
+      height: calc(100vh - 20px);
+      min-height: 0;
       display: grid;
       grid-template-rows: minmax(0, 1fr) auto;
       gap: 10px;
@@ -367,7 +383,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       border-radius: 18px;
       border: 1px solid var(--atun-border-strong);
       background: var(--atun-panel);
-      min-height: 300px;
+      min-height: 0;
     }
     .history-empty {
       position: absolute;
@@ -416,8 +432,8 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       display: grid;
       gap: 12px;
       align-content: start;
-      min-height: 100%;
-      max-height: calc(100vh - 248px);
+      min-height: 0;
+      height: 100%;
       overflow: auto;
       padding: 14px;
     }
@@ -476,8 +492,8 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
     }
     .composer-input {
       width: 100%;
-      min-height: 112px;
-      max-height: 220px;
+      min-height: 82px;
+      max-height: 180px;
       padding: 0;
       border: 0;
       resize: none;
@@ -487,8 +503,8 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       overflow-y: auto;
     }
     .composer-shell.expanded .composer-input {
-      min-height: 188px;
-      max-height: 360px;
+      min-height: 144px;
+      max-height: 260px;
     }
     .composer-input::placeholder {
       color: var(--atun-placeholder);
