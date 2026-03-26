@@ -38,6 +38,15 @@ export interface ProviderConnectionSummary {
 	isActive: boolean;
 }
 
+export interface ModelSelectOption {
+	value: string;
+	connectionId: string;
+	connectionLabel: string;
+	providerKind: ProviderKind;
+	modelId: string;
+	modelLabel: string;
+}
+
 export interface ProviderConnectionRecord extends ProviderConnectionSummary {
 	secretKeyRef: string;
 	createdAt: string;
@@ -86,6 +95,7 @@ export interface SidebarViewState {
 	providerCards: ProviderCard[];
 	draftConfig: ProviderDraftConfig;
 	modelOptions: ProviderModel[];
+	modelSelectorOptions: ModelSelectOption[];
 	connections: ProviderConnectionSummary[];
 	activeConnectionId?: string;
 	selectedModelId?: string;

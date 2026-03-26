@@ -5,6 +5,7 @@ import type {
 	ChatCompletionInputMessage,
 	ChatMessageRecord,
 	ChatSessionRecord,
+	ModelSelectOption,
 	ProviderDraftConfig,
 	ProviderModel,
 	SidebarScreen,
@@ -46,11 +47,13 @@ export class SidebarViewModel {
 	}
 
 	public async getState(): Promise<SidebarViewState> {
+		const modelSelectorOptions = await this.buildModelSelectorOptions();
 		return {
 			screen: this.screen,
 			providerCards: this.providers.listSupportedProviders(),
 			draftConfig: this.draftConfig,
 			modelOptions: this.modelOptions,
+			modelSelectorOptions,
 			connections: this.connections,
 			activeConnectionId: this.activeConnectionId,
 			selectedModelId: this.selectedModelId,
@@ -175,6 +178,19 @@ export class SidebarViewModel {
 			this.chatSession = { ...this.chatSession, selectedModelId: this.selectedModelId };
 		}
 		this.emitDidChange();
+	}
+
+	public async setModelSelection(connectionId: string, modelId: string): Promise<void> {
+		if (!connectionId || !modelId) {
+			return;
+		}
+
+		if (connectionId !== this.activeConnectionId) {
+			await this.providers.setActiveConnection(connectionId);
+			await this.loadConnectionChat(connectionId, true);
+		}
+
+		await this.setSelectedModel(modelId);
 	}
 
 	public async newChat(): Promise<void> {
@@ -342,6 +358,24 @@ export class SidebarViewModel {
 		this.modelOptions = [];
 	}
 
+	private async buildModelSelectorOptions(): Promise<ModelSelectOption[]> {
+		const options: ModelSelectOption[] = [];
+		for (const connection of this.connections) {
+			const models = await this.providers.listEnabledModels(connection.id);
+			for (const model of models) {
+				options.push({
+					value: `${connection.id}::${model.id}`,
+					connectionId: connection.id,
+					connectionLabel: `${capitalizeProvider(connection.providerKind)} - ${connection.displayName}`,
+					providerKind: connection.providerKind,
+					modelId: model.id,
+					modelLabel: model.label,
+				});
+			}
+		}
+		return options;
+	}
+
 	private emitDidChange(): void {
 		this.onDidChangeEmitter.fire();
 	}
@@ -357,4 +391,8 @@ function resolveSelectedModelId(current: string | undefined, models: ProviderMod
 function trimTitle(value: string): string {
 	const normalized = value.trim().replace(/\s+/g, ' ');
 	return normalized.length > 48 ? `${normalized.slice(0, 45)}...` : normalized;
+}
+
+function capitalizeProvider(value: string): string {
+	return value.length > 0 ? `${value.charAt(0).toUpperCase()}${value.slice(1)}` : value;
 }

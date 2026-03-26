@@ -2,7 +2,7 @@
 
 ## Active Task
 
-Create a baseline commit for the new `.context/` workflow and leave the repository clean before starting the next redesign phase.
+Redesign the extension UI toward a more editor-native minimal shell, using VS Code theme token mapping and a single grouped model selector that combines provider type, provider name and models.
 
 ## What Was Being Worked On Before This
 
@@ -15,32 +15,33 @@ The last completed feature work was release `2.1.1`:
 
 ## Last Thing Modified
 
-The latest repo-level changes in this session are:
+The latest completed repo-level changes before this task were:
 
-- verified the new `.context/` files were created and readable
-- confirmed `.gitignore` now excludes local test cache and temporary context scratch files
+- baseline `.context/` workflow committed
+- the repository was left clean before beginning this redesign
 
 ## Decision Made And Why
 
 Decision:
-- commit `.context/` now as the baseline memory system for the project before doing the next UI/integration redesign
+- keep the current extension architecture
+- push the UI toward a more native/editor-like feel by combining:
+  - native VS Code surfaces where possible
+  - webview only for isolated chat and complex UI
+- remove the separate provider selector from the chat surface and replace it with one grouped model selector
 
 Why:
-- it establishes persistent project memory before a larger architectural iteration
-- it keeps the worktree clean and avoids mixing context setup with the upcoming redesign
+- this matches the intended architecture used by agent-style extensions
+- it reduces duplicated selectors in the current chat shell
+- it keeps the provider/runtime backend intact while allowing a major UI redesign
 
 ## Logical Next Step
 
-After this commit:
+Current execution order:
 
-1. redefine the extension shell around native VS Code surfaces first:
-   - Activity Bar
-   - TreeView
-   - Commands
-   - QuickPick
-2. reduce the webview to the isolated chat/complex UI surface only
-3. redesign the current sidebar UI to be more minimal and closer to other agent extensions
+1. prepare state and contracts for unified provider-model selection
+2. redesign the webview with VS Code token mapping and the new minimal layout
+3. validate and package each stage with recoverable commits
 
 ## Session Close Note
 
-This session is the baseline commit for project context management. The next session focus is the native/editor-integrated redesign.
+This session focus is the native/editor-integrated redesign with small commits after each safe stage.
