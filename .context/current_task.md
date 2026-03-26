@@ -2,7 +2,7 @@
 
 ## Active Task
 
-Fix the next round of integration issues in the sidebar: keep native toolbar icons theme-correct and remove page-level scrolling so only the chat history scrolls.
+Persist the release workflow rule in `.context/` and cut the next packaged version after the latest sidebar fixes.
 
 ## What Was Being Worked On Before This
 
@@ -15,24 +15,21 @@ The last completed feature work was release `2.1.1`:
 
 ## Last Thing Modified
 
-The latest completed release changes are:
+The latest completed code changes are:
 
-- version numbers were bumped to `2.2.0`
-- changelog and README were updated for the redesigned shell
-- `.vscode/launch.json` and `.vscode/tasks.json` were added for `F5` / `Run Extension`
-- compile and local VSIX packaging passed for `2.2.0`
+- native toolbar icons were switched to theme-aware light/dark assets
+- page-level scrolling was removed so the chat shell owns scrolling
+- each of those changes landed in its own commit
 
 ## Decision Made And Why
 
 Decision:
-- persist the workflow rule that every change lands as its own commit
-- fix the next UI pass in small recoverable steps:
-  - toolbar icon rendering
-  - page-level scrolling/layout compaction
+- persist one more workflow rule: a finished change set should end with the next packaged release ready
+- cut a patch release because the last completed work changed user-visible behavior but did not bump the shipped version
 
 Why:
-- the project is being tuned visually and benefits from frequent rollback points
-- the current shell still has integration regressions that break the native feel
+- the repo is being used iteratively and the installable artifact should stay synchronized with the latest safe state
+- the icon and layout fixes are user-facing and belong in the next packaged build
 
 ## Logical Next Step
 

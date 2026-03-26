@@ -40,6 +40,7 @@
 
 - When changes are meaningful, update version, changelog and packaged VSIX output.
 - Keep versioned artifacts under `packages/vX.Y.Z/`.
+- When a requested change set is considered finished, leave the next release version packaged and ready to install, not just committed in source form.
 - Verify at least:
   - `npm run compile`
   - `npm run package:local`
