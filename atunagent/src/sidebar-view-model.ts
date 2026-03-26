@@ -68,6 +68,11 @@ export class SidebarViewModel {
 
 	public async openProviderPicker(): Promise<void> {
 		this.error = undefined;
+		const providerCards = this.providers.listSupportedProviders();
+		if (providerCards.length === 1) {
+			await this.chooseProvider(providerCards[0].kind);
+			return;
+		}
 		this.screen = 'provider-picker';
 		this.emitDidChange();
 	}
@@ -87,7 +92,7 @@ export class SidebarViewModel {
 	public async goBack(): Promise<void> {
 		this.error = undefined;
 		if (this.screen === 'provider-config') {
-			this.screen = 'provider-picker';
+			this.screen = this.connections.length > 0 ? 'chat' : 'onboarding';
 		} else if (this.screen === 'provider-picker') {
 			this.screen = this.connections.length > 0 ? 'chat' : 'onboarding';
 		}
@@ -273,7 +278,7 @@ export class SidebarViewModel {
 				this.emitDidChange();
 			}
 		} catch (error) {
-			assistantError = error instanceof Error ? error.message : 'La respuesta del proveedor falló.';
+			assistantError = error instanceof Error ? error.message : 'La respuesta del proveedor fallo.';
 			if (!assistantContent) {
 				assistantContent = `Error: ${assistantError}`;
 			}
