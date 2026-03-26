@@ -82,3 +82,26 @@ A text replacement touched encoded content inside the HTML template string and c
 ### Rule
 
 Prefer ASCII-safe UI strings in the inline webview template unless the file encoding is tightly controlled end-to-end.
+
+---
+
+## 5. `git index.lock` created by parallel git operations
+
+### What happened
+
+A commit attempt failed with:
+
+- `Unable to create '.git/index.lock': File exists.`
+
+### Cause
+
+`git add` and `git commit` were launched in parallel while preparing a recoverable checkpoint commit.
+
+### Fix
+
+- verified repo state
+- retried the commit sequentially after the lock cleared
+
+### Rule
+
+Do not run git staging and commit operations in parallel in this repository. Keep git mutation steps sequential even when other read-only tooling is parallelized.

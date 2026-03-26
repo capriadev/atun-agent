@@ -2,7 +2,7 @@
 
 ## Active Task
 
-Redesign the extension UI toward a more editor-native minimal shell, using VS Code theme token mapping and a single grouped model selector that combines provider type, provider name and models.
+Consolidate the native-themed shell redesign and define the next native/editor integration steps on top of the new grouped model selector.
 
 ## What Was Being Worked On Before This
 
@@ -15,33 +15,36 @@ The last completed feature work was release `2.1.1`:
 
 ## Last Thing Modified
 
-The latest completed repo-level changes before this task were:
+The latest completed feature changes are:
 
-- baseline `.context/` workflow committed
-- the repository was left clean before beginning this redesign
+- the sidebar webview was redesigned into a minimal chat shell driven by mapped `--vscode-*` tokens
+- provider and model selection were unified into a single grouped model selector
+- the native settings title action now opens the provider setup flow instead of being a stub
+- compile and local VSIX packaging passed after the redesign
 
 ## Decision Made And Why
 
 Decision:
 - keep the current extension architecture
-- push the UI toward a more native/editor-like feel by combining:
-  - native VS Code surfaces where possible
-  - webview only for isolated chat and complex UI
-- remove the separate provider selector from the chat surface and replace it with one grouped model selector
+- treat the webview as a native-looking shell instead of a custom app panel
+- map theme usage through local `--atun-*` variables backed by `--vscode-*`
+- remove the separate provider selector from chat and keep model switching grouped by provider connection
+- use the native title action for provider management entry instead of another HTML toolbar button
 
 Why:
 - this matches the intended architecture used by agent-style extensions
-- it reduces duplicated selectors in the current chat shell
+- it reduces duplicated selectors in the chat shell
 - it keeps the provider/runtime backend intact while allowing a major UI redesign
+- it makes the UI less visually isolated from the editor theme
 
 ## Logical Next Step
 
 Current execution order:
 
-1. prepare state and contracts for unified provider-model selection
-2. redesign the webview with VS Code token mapping and the new minimal layout
-3. validate and package each stage with recoverable commits
+1. wire real behavior for the remaining native/editor actions: history, ghost chat, access mode and agent mode
+2. decide which controls stay in webview and which move to native `QuickPick` or `TreeView`
+3. refine the grouped model selector and message history interactions after visual review
 
 ## Session Close Note
 
-This session focus is the native/editor-integrated redesign with small commits after each safe stage.
+This session completed the first native-themed shell pass with recoverable commits and successful packaging.

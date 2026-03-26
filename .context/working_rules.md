@@ -33,6 +33,8 @@
 - Prefer real editor integration points over fake toolbar controls inside HTML when the editor exposes them.
 - If a control belongs naturally in the VS Code view header, use `contributes.menus["view/title"]` instead of drawing it in the webview.
 - The native `@atun` participant is secondary until the backend/runtime is mature enough to share behavior cleanly.
+- In the webview, map VS Code theme tokens into project-scoped UI vars first (for example `--atun-*`) and style from those vars instead of spreading raw `--vscode-*` usage everywhere.
+- Keep provider/model switching in one grouped selector when the user is already inside chat; avoid duplicated selectors for the same state.
 
 ## Release Conventions
 

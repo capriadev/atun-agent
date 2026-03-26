@@ -40,6 +40,8 @@ There are two layers:
 - `atunagent/src/chat-view.ts`
   - webview HTML, CSS and client-side message bridge
   - screen flow: onboarding, provider picker, provider config, chat
+  - native-themed shell built from local `--atun-*` variables mapped to `--vscode-*`
+  - grouped model selector by provider connection inside the chat footer
 
 - `atunagent/src/sidebar-view-model.ts`
   - main state coordinator for the sidebar
@@ -86,6 +88,13 @@ Current integration points:
 - native `view/title` toolbar actions next to the editor's fullscreen control
 - native command registrations
 - native chat participant kept as a secondary bridge
+
+Current chat shell behavior:
+
+- onboarding handles first provider connection
+- provider configuration remains a webview flow
+- active chat uses one grouped model selector instead of separate provider/model dropdowns
+- provider management entry now also exists through the native settings title action
 
 The long-term direction is to increase native/editor-level integration while keeping the provider, persistence and chat runtime independent from any single VS Code API surface.
 
