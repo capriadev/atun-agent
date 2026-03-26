@@ -12,8 +12,7 @@ type IncomingMessage =
 	| { type: 'validateProviderDraft' }
 	| { type: 'toggleDraftModel'; modelId: string }
 	| { type: 'saveProviderConnection' }
-	| { type: 'setActiveConnection'; connectionId: string }
-	| { type: 'setSelectedModel'; modelId: string }
+	| { type: 'setModelSelection'; connectionId: string; modelId: string }
 	| { type: 'sendChatMessage'; content: string }
 	| { type: 'newChat' }
 	| { type: 'openProviderManager' }
@@ -73,11 +72,8 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
 				case 'saveProviderConnection':
 					await this.sidebarViewModel.saveProviderConnection();
 					return;
-				case 'setActiveConnection':
-					await this.sidebarViewModel.setActiveConnection(message.connectionId);
-					return;
-				case 'setSelectedModel':
-					await this.sidebarViewModel.setSelectedModel(message.modelId);
+				case 'setModelSelection':
+					await this.sidebarViewModel.setModelSelection(message.connectionId, message.modelId);
 					return;
 				case 'sendChatMessage':
 					await this.sidebarViewModel.sendChatMessage(message.content);
@@ -129,278 +125,619 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
   <style>
     :root {
       color-scheme: light dark;
+      --atun-bg: var(--vscode-sideBar-background);
+      --atun-bg-elevated: var(--vscode-editorWidget-background, var(--vscode-editor-background));
+      --atun-panel: var(--vscode-editor-background);
+      --atun-panel-muted: var(--vscode-input-background);
+      --atun-border: var(--vscode-panel-border, var(--vscode-editorGroup-border));
+      --atun-border-strong: var(--vscode-contrastBorder, var(--vscode-panel-border));
+      --atun-text: var(--vscode-sideBar-foreground);
+      --atun-muted: var(--vscode-descriptionForeground);
+      --atun-accent: var(--vscode-button-background);
+      --atun-accent-text: var(--vscode-button-foreground);
+      --atun-secondary: var(--vscode-button-secondaryBackground, var(--vscode-input-background));
+      --atun-secondary-text: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+      --atun-hover: var(--vscode-list-hoverBackground, var(--vscode-toolbar-hoverBackground));
+      --atun-input-text: var(--vscode-input-foreground);
+      --atun-placeholder: var(--vscode-input-placeholderForeground, var(--vscode-descriptionForeground));
+      --atun-link: var(--vscode-textLink-foreground);
+      --atun-error: var(--vscode-errorForeground);
+      --atun-warning-border: var(--vscode-inputValidation-warningBorder, var(--vscode-panel-border));
+      --atun-scrollbar: var(--vscode-scrollbarSlider-background, rgba(128, 128, 128, 0.4));
+      --atun-scrollbar-hover: var(--vscode-scrollbarSlider-hoverBackground, rgba(128, 128, 128, 0.6));
+      --atun-focus: var(--vscode-focusBorder);
+      --atun-font: var(--vscode-font-family);
+      --atun-radius: 14px;
+      --atun-radius-sm: 10px;
+      --atun-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
     }
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+    }
     body {
       margin: 0;
       min-height: 100vh;
-      background:
-        radial-gradient(circle at top, color-mix(in srgb, var(--vscode-button-background) 20%, transparent), transparent 45%),
-        var(--vscode-sideBar-background);
-      color: var(--vscode-sideBar-foreground);
-      font: 12px/1.45 var(--vscode-font-family);
+      background: var(--atun-bg);
+      color: var(--atun-text);
+      font: 12px/1.45 var(--atun-font);
     }
-    .app {
-      padding: 14px;
-      display: grid;
-      gap: 12px;
-      min-height: 100vh;
+    button, input, textarea, select {
+      font: inherit;
+      color: inherit;
     }
-    .card {
-      border: 1px solid var(--vscode-panel-border);
-      border-radius: 12px;
-      background: color-mix(in srgb, var(--vscode-editor-background) 84%, transparent);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 1px solid var(--atun-focus);
+      outline-offset: 1px;
     }
     .screen {
       display: none;
+      min-height: 100vh;
     }
     .screen.active {
-      display: grid;
-      gap: 12px;
-      min-height: calc(100vh - 28px);
+      display: block;
     }
-    .hero {
-      place-content: center;
-      text-align: center;
-      gap: 16px;
+    .surface {
+      border: 1px solid var(--atun-border);
+      border-radius: var(--atun-radius);
+      background: var(--atun-bg-elevated);
+      box-shadow: var(--atun-shadow);
+    }
+    .onboarding {
+      display: grid;
+      place-items: center;
       padding: 18px;
     }
-    .hero img {
-      width: 72px;
-      height: 72px;
+    .onboarding-card {
+      width: 100%;
+      max-width: 360px;
+      padding: 24px 18px;
+      text-align: center;
+      display: grid;
+      gap: 16px;
+    }
+    .onboarding-card img {
+      width: 78px;
+      height: 78px;
       margin: 0 auto;
     }
-    .hero h1, .titlebar h1 {
+    .stack {
+      display: grid;
+      gap: 6px;
+    }
+    .title {
       margin: 0;
-      font-size: 20px;
+      font-size: 26px;
+      line-height: 1;
       letter-spacing: 0.08em;
       text-transform: uppercase;
+      font-weight: 700;
     }
-    .hero p, .subtitle {
+    .subtitle {
       margin: 0;
-      color: var(--vscode-descriptionForeground);
+      color: var(--atun-muted);
     }
-    .titlebar {
+    .button {
+      width: 100%;
+      min-height: 40px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--atun-border);
+      background: var(--atun-secondary);
+      color: var(--atun-secondary-text);
+      cursor: pointer;
+    }
+    .button:hover:not(:disabled) {
+      background: var(--atun-hover);
+    }
+    .button.primary {
+      border-color: transparent;
+      background: var(--atun-accent);
+      color: var(--atun-accent-text);
+    }
+    .button.link {
+      border-style: dashed;
+      background: transparent;
+      color: var(--atun-link);
+    }
+    .button:disabled {
+      opacity: 0.55;
+      cursor: default;
+    }
+    .button-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .picker, .config, .chat-screen {
+      padding: 10px;
+    }
+    .picker, .config {
+      display: grid;
+      gap: 12px;
+    }
+    .toolbar-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 10px;
     }
-    .titlebar .left {
-      display: grid;
-      gap: 4px;
-    }
-    .provider-card, .panel {
-      padding: 14px;
-    }
-    .provider-card {
-      display: grid;
-      gap: 8px;
-      cursor: pointer;
-    }
-    .provider-card:hover {
-      border-color: var(--vscode-button-background);
-    }
-    .label {
-      display: grid;
-      gap: 6px;
-      font-size: 11px;
+    .toolbar-row h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.1;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: var(--vscode-descriptionForeground);
     }
-    input, textarea, select, button {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid var(--vscode-panel-border);
-      background: var(--vscode-input-background);
-      color: var(--vscode-input-foreground);
-      font: inherit;
-    }
-    input, textarea, select {
-      padding: 10px 12px;
-    }
-    textarea {
-      resize: vertical;
-      min-height: 90px;
-    }
-    button {
-      cursor: pointer;
-      padding: 10px 12px;
-      background: var(--vscode-button-secondaryBackground);
-      color: var(--vscode-button-secondaryForeground);
-    }
-    button.primary {
-      background: var(--vscode-button-background);
-      color: var(--vscode-button-foreground);
-      border-color: transparent;
-    }
-    button.linklike {
+    .icon-lite {
+      width: auto;
+      min-height: 32px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--atun-border);
       background: transparent;
-      color: var(--vscode-textLink-foreground);
-      border-style: dashed;
+      cursor: pointer;
+      color: var(--atun-muted);
     }
-    button:disabled, input:disabled, textarea:disabled, select:disabled {
-      opacity: 0.6;
-      cursor: default;
-    }
-    .actions, .row {
+    .provider-card {
+      width: 100%;
+      padding: 14px;
+      text-align: left;
       display: grid;
-      gap: 8px;
+      gap: 6px;
+      cursor: pointer;
+      border-radius: var(--atun-radius);
+      border: 1px solid var(--atun-border);
+      background: var(--atun-bg-elevated);
     }
-    .row.two {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .provider-card:hover {
+      background: var(--atun-hover);
+    }
+    .provider-card strong {
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .config-panel {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+    .field label {
+      color: var(--atun-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 11px;
+    }
+    .input {
+      width: 100%;
+      min-height: 40px;
+      padding: 10px 12px;
+      border-radius: var(--atun-radius-sm);
+      border: 1px solid var(--atun-border);
+      background: var(--atun-panel-muted);
+      color: var(--atun-input-text);
+    }
+    .hint {
+      color: var(--atun-muted);
+      font-size: 11px;
+    }
+    .notice {
+      padding: 10px 12px;
+      border-radius: var(--atun-radius-sm);
+      border: 1px solid var(--atun-warning-border);
+      background: var(--atun-panel-muted);
+      color: var(--atun-text);
     }
     .models {
       display: grid;
       gap: 8px;
-      max-height: 220px;
+      max-height: 240px;
       overflow: auto;
       padding-right: 2px;
     }
-    .model {
+    .model-row {
       display: flex;
       align-items: center;
       gap: 10px;
       padding: 10px 12px;
-      border: 1px solid var(--vscode-panel-border);
-      border-radius: 10px;
-      background: color-mix(in srgb, var(--vscode-editor-background) 84%, transparent);
+      border-radius: var(--atun-radius-sm);
+      border: 1px solid var(--atun-border);
+      background: var(--atun-panel);
     }
-    .model input {
-      width: auto;
+    .model-row input {
       margin: 0;
-    }
-    .notice {
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--vscode-inputValidation-warningBorder);
-      background: color-mix(in srgb, var(--vscode-editorWarning-foreground) 12%, transparent);
-      color: var(--vscode-foreground);
+      width: auto;
     }
     .chat-shell {
-      grid-template-rows: auto auto 1fr auto;
-    }
-    .chat-toolbar {
+      min-height: calc(100vh - 20px);
       display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+    .history-shell {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid var(--atun-border-strong);
+      background: var(--atun-panel);
+      min-height: 300px;
+    }
+    .history-empty {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 10px;
+      padding: 24px;
+      text-align: center;
+      background:
+        repeating-linear-gradient(135deg, transparent 0, transparent 32px, rgba(127, 127, 127, 0.18) 32px, rgba(127, 127, 127, 0.18) 38px),
+        var(--atun-panel);
+    }
+    .history-empty[hidden] {
+      display: none;
+    }
+    .empty-wordmark {
+      display: flex;
+      align-items: center;
       gap: 8px;
+      font-size: clamp(34px, 7vw, 58px);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 0.95;
+    }
+    .empty-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border: 2px solid currentColor;
+      border-radius: 999px;
+      font-size: 24px;
+    }
+    .empty-copy {
+      max-width: 240px;
+      margin: 0;
+      color: var(--atun-muted);
     }
     .messages {
+      position: relative;
+      z-index: 1;
       display: grid;
-      gap: 10px;
+      gap: 12px;
       align-content: start;
+      min-height: 100%;
+      max-height: calc(100vh - 248px);
       overflow: auto;
-      min-height: 280px;
-      padding: 10px;
+      padding: 14px;
+    }
+    .messages[hidden] {
+      display: none;
     }
     .message {
-      max-width: 92%;
-      padding: 10px 12px;
-      border-radius: 12px;
+      max-width: 94%;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--atun-border);
+      background: var(--atun-bg-elevated);
       white-space: pre-wrap;
       word-break: break-word;
-      border: 1px solid var(--vscode-panel-border);
     }
     .message.user {
       margin-left: auto;
-      background: color-mix(in srgb, var(--vscode-button-background) 18%, var(--vscode-editor-background));
+      background: var(--atun-secondary);
     }
     .message.assistant {
-      background: color-mix(in srgb, var(--vscode-editor-background) 88%, transparent);
+      margin-right: auto;
+      background: var(--atun-panel);
     }
     .message.error {
-      border-color: var(--vscode-errorForeground);
+      border-color: var(--atun-error);
     }
-    .empty {
-      text-align: center;
-      color: var(--vscode-descriptionForeground);
-      padding: 20px 10px;
+    .composer-shell {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid var(--atun-border-strong);
+      background: var(--atun-bg-elevated);
     }
-    .tiny {
-      font-size: 11px;
-      color: var(--vscode-descriptionForeground);
+    .composer-header {
+      display: flex;
+      justify-content: flex-end;
+      min-height: 10px;
+    }
+    .expand-button {
+      min-width: 26px;
+      min-height: 26px;
+      padding: 0;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--atun-muted);
+      cursor: pointer;
+    }
+    .expand-button:hover {
+      background: var(--atun-hover);
+    }
+    .composer-frame {
+      border-radius: 12px;
+      background: transparent;
+    }
+    .composer-input {
+      width: 100%;
+      min-height: 112px;
+      max-height: 220px;
+      padding: 0;
+      border: 0;
+      resize: none;
+      background: transparent;
+      color: var(--atun-input-text);
+      line-height: 1.5;
+      overflow-y: auto;
+    }
+    .composer-shell.expanded .composer-input {
+      min-height: 188px;
+      max-height: 360px;
+    }
+    .composer-input::placeholder {
+      color: var(--atun-placeholder);
+    }
+    .composer-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .prompt-actions,
+    .composer-stats,
+    .footer-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .micro-button,
+    .chip {
+      min-height: 30px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--atun-border);
+      background: var(--atun-panel);
+      color: var(--atun-text);
+      cursor: pointer;
+    }
+    .micro-button:hover,
+    .chip:hover {
+      background: var(--atun-hover);
+    }
+    .micro-button {
+      width: 32px;
+      padding: 0;
+      justify-content: center;
+      display: inline-flex;
+      align-items: center;
+      font-weight: 700;
+    }
+    .micro-button:disabled,
+    .chip:disabled {
+      cursor: default;
+      opacity: 0.7;
+    }
+    .send-button {
+      min-height: 32px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      background: var(--atun-accent);
+      color: var(--atun-accent-text);
+      cursor: pointer;
+    }
+    .send-button:hover:not(:disabled) {
+      opacity: 0.92;
+    }
+    .send-button:disabled {
+      opacity: 0.55;
+      cursor: default;
+    }
+    .stat {
+      color: var(--atun-muted);
+      white-space: nowrap;
+    }
+    .footer-controls {
+      padding-top: 2px;
+      border-top: 1px solid var(--atun-border);
+      justify-content: space-between;
+    }
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-width: 0;
+      flex: 1;
+    }
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chip.static {
+      cursor: default;
+      color: var(--atun-muted);
+    }
+    .model-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      max-width: 100%;
+    }
+    .model-chip span {
+      color: var(--atun-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 10px;
+    }
+    .model-select {
+      min-width: 128px;
+      max-width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--atun-text);
+      padding: 0;
+    }
+    .model-select:disabled {
+      opacity: 0.7;
+    }
+    .native-link {
+      background: transparent;
+      border-style: dashed;
+      color: var(--atun-link);
+    }
+    .context-meter {
+      min-height: 30px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--atun-border);
+      background: var(--atun-panel);
+      color: var(--atun-muted);
+      white-space: nowrap;
+    }
+    .scrollable::-webkit-scrollbar,
+    .models::-webkit-scrollbar,
+    .messages::-webkit-scrollbar,
+    .composer-input::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    .scrollable::-webkit-scrollbar-thumb,
+    .models::-webkit-scrollbar-thumb,
+    .messages::-webkit-scrollbar-thumb,
+    .composer-input::-webkit-scrollbar-thumb {
+      background: var(--atun-scrollbar);
+      border-radius: 999px;
+    }
+    .scrollable::-webkit-scrollbar-thumb:hover,
+    .models::-webkit-scrollbar-thumb:hover,
+    .messages::-webkit-scrollbar-thumb:hover,
+    .composer-input::-webkit-scrollbar-thumb:hover {
+      background: var(--atun-scrollbar-hover);
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <section id="screen-onboarding" class="screen card hero">
+  <section id="screen-onboarding" class="screen onboarding">
+    <div class="surface onboarding-card">
       <img src="${logo}" alt="Atun Agent logo" />
-      <div class="actions">
-        <h1>Atun Agent</h1>
-        <p>Conecta un proveedor, elige modelos y arranca el chat local de la extension.</p>
+      <div class="stack">
+        <h1 class="title">Atun Agent</h1>
+        <p class="subtitle">Conecta una cuenta, habilita modelos y usa el chat local dentro del editor.</p>
       </div>
-      <button id="startConnect" class="primary">Anadir API / API Connect</button>
-    </section>
+      <button id="startConnect" class="button primary">Anadir API / API Connect</button>
+    </div>
+  </section>
 
-    <section id="screen-provider-picker" class="screen">
-      <div class="titlebar">
-        <div class="left">
-          <h1>Agregar proveedor</h1>
-          <p class="subtitle">La infraestructura interna empieza con Groq.</p>
-        </div>
-        <button id="pickerBack">Volver</button>
+  <section id="screen-provider-picker" class="screen picker">
+    <div class="toolbar-row">
+      <div class="stack">
+        <h1>Agregar proveedor</h1>
+        <p class="subtitle">La base del runtime arranca con Groq.</p>
       </div>
-      <button id="groqCard" class="card provider-card">
-        <strong>Groq</strong>
-        <span class="subtitle">API compatible con OpenAI, lista de modelos y chat por streaming.</span>
-      </button>
-    </section>
+      <button id="pickerBack" class="icon-lite">Volver</button>
+    </div>
+    <button id="groqCard" class="provider-card">
+      <strong>Groq</strong>
+      <span class="subtitle">Lista de modelos y chat por streaming.</span>
+    </button>
+  </section>
 
-    <section id="screen-provider-config" class="screen">
-      <div class="titlebar">
-        <div class="left">
-          <h1>Configuracion</h1>
-          <p class="subtitle">Ingresa tu conexion Groq y marca los modelos habilitados.</p>
-        </div>
-        <button id="configBack">Volver</button>
+  <section id="screen-provider-config" class="screen config">
+    <div class="toolbar-row">
+      <div class="stack">
+        <h1>Configuracion</h1>
+        <p class="subtitle">Define el nombre de la conexion y marca los modelos disponibles.</p>
       </div>
-      <div class="panel card">
-        <div class="actions">
-          <label class="label">Nombre personalizado
-            <input id="displayName" type="text" placeholder="Mi Groq principal" />
-          </label>
-          <label class="label">API
-            <input id="apiKey" type="password" placeholder="gsk_..." />
-          </label>
-          <div class="tiny" id="modelsHint">Al ingresar la API key se cargaran los modelos disponibles.</div>
-          <div id="providerError" class="notice" hidden></div>
-          <div id="modelsWrap" class="models"></div>
-          <div class="row two">
-            <button id="refreshModels">Actualizar modelos</button>
-            <button id="saveConnection" class="primary">Aceptar</button>
-          </div>
-        </div>
+      <button id="configBack" class="icon-lite">Volver</button>
+    </div>
+    <div class="surface config-panel">
+      <div class="field">
+        <label for="displayName">Nombre personalizado</label>
+        <input id="displayName" class="input" type="text" placeholder="Groq Juan" />
       </div>
-    </section>
+      <div class="field">
+        <label for="apiKey">API</label>
+        <input id="apiKey" class="input" type="password" placeholder="gsk_..." />
+      </div>
+      <div id="modelsHint" class="hint">Al ingresar la API key se cargaran los modelos disponibles.</div>
+      <div id="providerError" class="notice" hidden></div>
+      <div id="modelsWrap" class="models"></div>
+      <div class="button-row">
+        <button id="refreshModels" class="button">Actualizar modelos</button>
+        <button id="saveConnection" class="button primary">Aceptar</button>
+      </div>
+    </div>
+  </section>
 
-    <section id="screen-chat" class="screen chat-shell">
-      <div class="titlebar">
-        <div class="left">
-          <h1>Atun Agent</h1>
-          <p class="subtitle">Chat local conectado a tus proveedores.</p>
-        </div>
-        <button id="manageProviders">Administrar proveedores</button>
-      </div>
-      <div class="row two chat-toolbar">
-        <select id="connectionSelect"></select>
-        <select id="modelSelect"></select>
-      </div>
+  <section id="screen-chat" class="screen chat-screen">
+    <div class="chat-shell">
       <div id="chatError" class="notice" hidden></div>
-      <div id="messages" class="card messages"></div>
-      <div class="panel card">
-        <div class="actions">
-          <textarea id="composer" placeholder="Escribe tu mensaje..."></textarea>
-          <div class="row two">
-            <button id="newChat">Nuevo chat</button>
-            <button id="sendMessage" class="primary">Enviar</button>
+      <div class="history-shell">
+        <div id="emptyState" class="history-empty">
+          <div class="empty-wordmark">
+            <span>Chat</span>
+            <span class="empty-arrow">&#8593;</span>
           </div>
-          <button id="openNativeChat" class="linklike">Abrir chat nativo (@atun)</button>
+          <p class="empty-copy">Escribe el primer mensaje para empezar la sesion con el modelo seleccionado.</p>
+        </div>
+        <div id="messages" class="messages"></div>
+      </div>
+      <div id="composerShell" class="composer-shell">
+        <div class="composer-header">
+          <button id="toggleComposerSize" class="expand-button" title="Expandir input">^</button>
+        </div>
+        <div class="composer-frame">
+          <textarea id="composer" class="composer-input scrollable" placeholder="Escribe tu mensaje..."></textarea>
+        </div>
+        <div class="composer-meta">
+          <div class="prompt-actions">
+            <button class="micro-button" data-insert="#" title="Adjuntar o mencionar contexto">#</button>
+            <button class="micro-button" data-insert="/" title="Invocar skills">/</button>
+            <button class="micro-button" data-insert="@" title="Invocar MCP">@</button>
+          </div>
+          <div class="composer-stats">
+            <span id="tokenCount" class="stat">0 tok</span>
+            <button id="sendMessage" class="send-button">Enviar</button>
+          </div>
+        </div>
+        <div class="footer-controls">
+          <div class="footer-left">
+            <button id="newChat" class="chip">Nuevo chat</button>
+            <button class="chip static" disabled>Full Access</button>
+            <button class="chip static" disabled>Agent</button>
+            <label class="chip model-chip">
+              <span>Model</span>
+              <select id="modelSelect" class="model-select"></select>
+            </label>
+          </div>
+          <div class="footer-right">
+            <button id="openNativeChat" class="chip native-link">Native</button>
+            <div id="contextMeter" class="context-meter">0% contexto</div>
+          </div>
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
 
   <script nonce="${nonce}">
     const vscode = acquireVsCodeApi();
@@ -409,6 +746,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       providerCards: [],
       draftConfig: { providerKind: 'groq', displayName: '', apiKey: '' },
       modelOptions: [],
+      modelSelectorOptions: [],
       connections: [],
       activeConnectionId: undefined,
       selectedModelId: undefined,
@@ -418,6 +756,10 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       isStreaming: false,
       error: undefined,
       nativeChatAvailable: false
+    };
+
+    const ui = {
+      composerExpanded: false
     };
 
     let validateTimer = undefined;
@@ -436,19 +778,39 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
     const modelsHint = document.getElementById('modelsHint');
     const saveConnection = document.getElementById('saveConnection');
     const refreshModels = document.getElementById('refreshModels');
-    const connectionSelect = document.getElementById('connectionSelect');
-    const modelSelect = document.getElementById('modelSelect');
     const messages = document.getElementById('messages');
+    const emptyState = document.getElementById('emptyState');
+    const composerShell = document.getElementById('composerShell');
     const composer = document.getElementById('composer');
+    const toggleComposerSize = document.getElementById('toggleComposerSize');
+    const tokenCount = document.getElementById('tokenCount');
+    const contextMeter = document.getElementById('contextMeter');
     const chatError = document.getElementById('chatError');
+    const modelSelect = document.getElementById('modelSelect');
     const sendMessage = document.getElementById('sendMessage');
     const openNativeChat = document.getElementById('openNativeChat');
+    const insertButtons = Array.from(document.querySelectorAll('[data-insert]'));
 
     function setScreen(next) {
       screens.onboarding.classList.toggle('active', next === 'onboarding');
       screens.providerPicker.classList.toggle('active', next === 'provider-picker');
       screens.providerConfig.classList.toggle('active', next === 'provider-config');
       screens.chat.classList.toggle('active', next === 'chat');
+    }
+
+    function estimateInputTokens() {
+      const inputChars = composer.value.trim().length;
+      if (!inputChars) {
+        return 0;
+      }
+      return Math.max(1, Math.ceil(inputChars / 4));
+    }
+
+    function estimateContextPercent() {
+      const transcriptChars = state.messages.reduce((total, message) => total + (message.content || '').length, 0);
+      const totalChars = transcriptChars + composer.value.length;
+      const estimatedTokens = Math.max(0, Math.ceil(totalChars / 4));
+      return Math.min(100, Math.round((estimatedTokens / 32000) * 100));
     }
 
     function renderProviderConfig() {
@@ -463,13 +825,13 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       modelsWrap.innerHTML = '';
       if (state.modelOptions.length === 0) {
         const empty = document.createElement('div');
-        empty.className = 'tiny';
+        empty.className = 'hint';
         empty.textContent = state.isValidatingProvider ? 'Cargando modelos...' : 'Todavia no hay modelos cargados.';
         modelsWrap.appendChild(empty);
       } else {
         for (const model of state.modelOptions) {
           const row = document.createElement('label');
-          row.className = 'model';
+          row.className = 'model-row';
 
           const checkbox = document.createElement('input');
           checkbox.type = 'checkbox';
@@ -496,59 +858,90 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       refreshModels.disabled = state.isValidatingProvider || !state.draftConfig.apiKey.trim();
     }
 
-    function renderChat() {
-      chatError.hidden = !state.error;
-      chatError.textContent = state.error || '';
-
-      connectionSelect.innerHTML = '';
-      for (const connection of state.connections) {
-        const option = document.createElement('option');
-        option.value = connection.id;
-        option.textContent = connection.displayName;
-        connectionSelect.appendChild(option);
-      }
-      connectionSelect.value = state.activeConnectionId || '';
-      connectionSelect.disabled = state.connections.length === 0 || state.isStreaming;
+    function renderGroupedModelSelect() {
+      const selectedValue = state.activeConnectionId && state.selectedModelId
+        ? state.activeConnectionId + '::' + state.selectedModelId
+        : '';
 
       modelSelect.innerHTML = '';
-      for (const model of state.modelOptions) {
-        if (!model.enabled) {
-          continue;
-        }
-        const option = document.createElement('option');
-        option.value = model.id;
-        option.textContent = model.label;
-        modelSelect.appendChild(option);
-      }
-      if (!modelSelect.options.length) {
+      if (!state.modelSelectorOptions.length) {
         const option = document.createElement('option');
         option.value = '';
         option.textContent = 'Sin modelos habilitados';
         modelSelect.appendChild(option);
+        modelSelect.disabled = true;
+        return;
       }
-      modelSelect.value = state.selectedModelId || '';
-      modelSelect.disabled = state.isStreaming || !state.selectedModelId;
 
-      messages.innerHTML = '';
-      if (!state.messages.length) {
-        const empty = document.createElement('div');
-        empty.className = 'empty';
-        empty.textContent = 'Todavia no hay mensajes. Envia el primero para arrancar el chat.';
-        messages.appendChild(empty);
-      } else {
-        for (const item of state.messages) {
-          const bubble = document.createElement('div');
-          bubble.className = 'message ' + item.role + (item.errorText ? ' error' : '');
-          bubble.textContent = item.content || (item.role === 'assistant' && state.isStreaming ? '...' : '');
-          messages.appendChild(bubble);
+      const groups = new Map();
+      for (const entry of state.modelSelectorOptions) {
+        if (!groups.has(entry.connectionLabel)) {
+          groups.set(entry.connectionLabel, []);
         }
-        messages.scrollTop = messages.scrollHeight;
+        groups.get(entry.connectionLabel).push(entry);
       }
 
-      const canSend = !state.isStreaming && Boolean(state.selectedModelId) && composer.value.trim().length > 0;
+      for (const pair of groups.entries()) {
+        const label = pair[0];
+        const items = pair[1];
+        const group = document.createElement('optgroup');
+        group.label = label;
+        for (const item of items) {
+          const option = document.createElement('option');
+          option.value = item.value;
+          option.textContent = item.modelLabel;
+          group.appendChild(option);
+        }
+        modelSelect.appendChild(group);
+      }
+
+      modelSelect.value = selectedValue;
+      if (modelSelect.value !== selectedValue && modelSelect.options.length > 0) {
+        modelSelect.selectedIndex = 0;
+      }
+      modelSelect.disabled = state.isStreaming || !state.modelSelectorOptions.length;
+    }
+
+    function renderMessages() {
+      const hasMessages = state.messages.length > 0;
+      emptyState.hidden = hasMessages;
+      messages.hidden = !hasMessages;
+      messages.innerHTML = '';
+
+      if (!hasMessages) {
+        return;
+      }
+
+      for (const item of state.messages) {
+        const bubble = document.createElement('div');
+        bubble.className = 'message ' + item.role + (item.errorText ? ' error' : '');
+        bubble.textContent = item.content || (item.role === 'assistant' && state.isStreaming ? '...' : '');
+        messages.appendChild(bubble);
+      }
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function renderChat() {
+      chatError.hidden = !state.error || state.screen !== 'chat';
+      chatError.textContent = state.error || '';
+      composerShell.classList.toggle('expanded', ui.composerExpanded);
+      toggleComposerSize.textContent = ui.composerExpanded ? 'v' : '^';
+      renderGroupedModelSelect();
+      renderMessages();
+
+      const inputTokens = estimateInputTokens();
+      const contextPercent = estimateContextPercent();
+      tokenCount.textContent = inputTokens + ' tok';
+      contextMeter.textContent = contextPercent + '% contexto';
+
+      const canSend = !state.isStreaming
+        && Boolean(state.selectedModelId)
+        && Boolean(composer.value.trim());
       sendMessage.disabled = !canSend;
       openNativeChat.hidden = !(state.nativeChatAvailable && state.connections.length > 0);
       openNativeChat.disabled = state.isStreaming;
+      composer.disabled = state.isStreaming || !state.modelSelectorOptions.length;
+      toggleComposerSize.disabled = state.isStreaming;
     }
 
     function render() {
@@ -568,6 +961,23 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       }, 450);
     }
 
+    function sendCurrentPrompt() {
+      const content = composer.value.trim();
+      if (!content) {
+        return;
+      }
+      vscode.postMessage({ type: 'sendChatMessage', content: content });
+      composer.value = '';
+      renderChat();
+    }
+
+    function insertComposerToken(token) {
+      const prefix = composer.value && !composer.value.endsWith(' ') ? ' ' : '';
+      composer.value = composer.value + prefix + token;
+      composer.focus();
+      renderChat();
+    }
+
     document.getElementById('startConnect').addEventListener('click', () => {
       vscode.postMessage({ type: 'openProviderPicker' });
     });
@@ -580,14 +990,15 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
     document.getElementById('groqCard').addEventListener('click', () => {
       vscode.postMessage({ type: 'chooseProvider', providerKind: 'groq' });
     });
-    document.getElementById('manageProviders').addEventListener('click', () => {
-      vscode.postMessage({ type: 'openProviderManager' });
-    });
     document.getElementById('newChat').addEventListener('click', () => {
       vscode.postMessage({ type: 'newChat' });
     });
     openNativeChat.addEventListener('click', () => {
       vscode.postMessage({ type: 'openNativeChat' });
+    });
+    toggleComposerSize.addEventListener('click', () => {
+      ui.composerExpanded = !ui.composerExpanded;
+      renderChat();
     });
 
     displayName.addEventListener('input', () => {
@@ -604,11 +1015,15 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       vscode.postMessage({ type: 'saveProviderConnection' });
     });
 
-    connectionSelect.addEventListener('change', () => {
-      vscode.postMessage({ type: 'setActiveConnection', connectionId: connectionSelect.value });
-    });
     modelSelect.addEventListener('change', () => {
-      vscode.postMessage({ type: 'setSelectedModel', modelId: modelSelect.value });
+      const value = modelSelect.value || '';
+      const parts = value.split('::');
+      const connectionId = parts[0];
+      const modelId = parts[1];
+      if (!connectionId || !modelId) {
+        return;
+      }
+      vscode.postMessage({ type: 'setModelSelection', connectionId: connectionId, modelId: modelId });
     });
 
     composer.addEventListener('input', () => {
@@ -624,14 +1039,13 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       sendCurrentPrompt();
     });
 
-    function sendCurrentPrompt() {
-      const content = composer.value.trim();
-      if (!content) {
-        return;
-      }
-      vscode.postMessage({ type: 'sendChatMessage', content });
-      composer.value = '';
-      renderChat();
+    for (const button of insertButtons) {
+      button.addEventListener('click', () => {
+        const token = button.getAttribute('data-insert') || '';
+        if (token) {
+          insertComposerToken(token);
+        }
+      });
     }
 
     window.addEventListener('message', (event) => {

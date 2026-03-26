@@ -45,7 +45,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 			await safeFocusSidebar();
 		}),
 		vscode.commands.registerCommand('atun-agent.view.settings', async () => {
-			void vscode.window.showInformationMessage('Settings toolbar action is not implemented yet.');
+			await safeFocusSidebar();
+			await sidebarViewModel.openProviderPicker();
 		}),
 		vscode.commands.registerCommand('atun-agent.view.history', async () => {
 			void vscode.window.showInformationMessage('History toolbar action is not implemented yet.');
