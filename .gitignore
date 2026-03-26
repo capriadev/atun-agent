@@ -5,3 +5,6 @@ dist
 data
 coverage
 .vscode/
+atunagent/.vscode-test/
+.context/*.tmp
+.context/*.bak
