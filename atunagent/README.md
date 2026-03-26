@@ -12,6 +12,7 @@ Repo: https://github.com/capriadev/atun-agent
 - SecretStorage for API keys
 - Simple local chat with selectable model and streaming responses
 - Native `@atun` bridge that points setup back to the sidebar when needed
+- Native view-title toolbar actions in the editor header for settings, history, new chat and ghost chat
 
 ## Quick start
 
@@ -38,6 +39,10 @@ Requirements:
 - `Atun Agent: Create File`
 - `Atun Agent: Delete File`
 - `Atun Agent: Run Terminal Command`
+
+Note:
+
+- Default keyboard shortcuts were removed in `2.1.1` because they were not behaving reliably.
 
 ## Configuration
 

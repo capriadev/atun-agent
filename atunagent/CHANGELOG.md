@@ -2,6 +2,20 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.1.1] - 2026-03-26
+
+### Changed
+- Removed the broken default keyboard shortcuts for opening Atun Agent.
+- Added native view-title actions next to the sidebar fullscreen control:
+  - settings
+  - history
+  - new chat
+  - ghost chat
+
+### Added
+- Toolbar command stubs for settings, history and ghost chat.
+- Toolbar-driven new chat action wired to the current sidebar flow.
+
 ## [2.1.0] - 2026-03-21
 
 ### Added

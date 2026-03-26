@@ -16,6 +16,10 @@ suite('Extension Test Suite', () => {
 
 		const commands = await vscode.commands.getCommands(true);
 		assert.ok(commands.includes('atun-agent.openChat'));
+		assert.ok(commands.includes('atun-agent.view.settings'));
+		assert.ok(commands.includes('atun-agent.view.history'));
+		assert.ok(commands.includes('atun-agent.view.newChat'));
+		assert.ok(commands.includes('atun-agent.view.ghostChat'));
 		assert.ok(commands.includes('atun-agent.focusSidebar'));
 		assert.ok(commands.includes('atun-agent.workspace.createFile'));
 		assert.ok(commands.includes('atun-agent.workspace.deleteFile'));

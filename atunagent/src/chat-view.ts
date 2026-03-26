@@ -331,7 +331,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
         <h1>Atun Agent</h1>
         <p>Conecta un proveedor, elige modelos y arranca el chat local de la extension.</p>
       </div>
-      <button id="startConnect" class="primary">Añadir API / API Connect</button>
+      <button id="startConnect" class="primary">Anadir API / API Connect</button>
     </section>
 
     <section id="screen-provider-picker" class="screen">
@@ -657,3 +657,4 @@ function createNonce(): string {
 	}
 	return result;
 }
+

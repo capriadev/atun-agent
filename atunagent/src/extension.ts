@@ -44,6 +44,19 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 		vscode.commands.registerCommand('atun-agent.openChat', async () => {
 			await safeFocusSidebar();
 		}),
+		vscode.commands.registerCommand('atun-agent.view.settings', async () => {
+			void vscode.window.showInformationMessage('Settings toolbar action is not implemented yet.');
+		}),
+		vscode.commands.registerCommand('atun-agent.view.history', async () => {
+			void vscode.window.showInformationMessage('History toolbar action is not implemented yet.');
+		}),
+		vscode.commands.registerCommand('atun-agent.view.newChat', async () => {
+			await safeFocusSidebar();
+			await sidebarViewModel.newChat();
+		}),
+		vscode.commands.registerCommand('atun-agent.view.ghostChat', async () => {
+			void vscode.window.showInformationMessage('Ghost chat toolbar action is not implemented yet.');
+		}),
 		vscode.commands.registerCommand('atun-agent.openNativeChat', async () => {
 			await safeOpenNativeChat(hostSupport);
 		}),

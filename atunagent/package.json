@@ -3,7 +3,7 @@
   "publisher": "capriadev",
   "displayName": "Atun Agent",
   "description": "Local-first VS Code agent sidebar with Groq provider setup, SQLite persistence and native chat bridge",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "icon": "assets/icons/logo/atunagent-icon.png",
   "author": {
     "name": "capriadev",
@@ -45,6 +45,26 @@
         "title": "Atun Agent: Open Chat"
       },
       {
+        "command": "atun-agent.view.settings",
+        "title": "Atun Agent: Settings",
+        "icon": "assets/icons/setting.svg"
+      },
+      {
+        "command": "atun-agent.view.history",
+        "title": "Atun Agent: History",
+        "icon": "assets/icons/fishing-history.svg"
+      },
+      {
+        "command": "atun-agent.view.newChat",
+        "title": "Atun Agent: New Chat",
+        "icon": "assets/icons/new-chat.svg"
+      },
+      {
+        "command": "atun-agent.view.ghostChat",
+        "title": "Atun Agent: Ghost Chat",
+        "icon": "assets/icons/ghost-chat.svg"
+      },
+      {
         "command": "atun-agent.focusSidebar",
         "title": "Atun Agent: Focus Sidebar"
       },
@@ -69,20 +89,30 @@
         "title": "Atun Agent: Run Terminal Command"
       }
     ],
-    "keybindings": [
-      {
-        "command": "atun-agent.openChat",
-        "key": "ctrl+alt+a",
-        "mac": "cmd+alt+a",
-        "when": "editorTextFocus || sideBarFocus || panelFocus || terminalFocus"
-      },
-      {
-        "command": "atun-agent.openChat",
-        "key": "ctrl+shift+a",
-        "mac": "cmd+shift+a",
-        "when": "editorTextFocus || sideBarFocus || panelFocus || terminalFocus"
-      }
-    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "atun-agent.view.settings",
+          "when": "view == atunAgent.shellView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "atun-agent.view.history",
+          "when": "view == atunAgent.shellView",
+          "group": "navigation@2"
+        },
+        {
+          "command": "atun-agent.view.newChat",
+          "when": "view == atunAgent.shellView",
+          "group": "navigation@3"
+        },
+        {
+          "command": "atun-agent.view.ghostChat",
+          "when": "view == atunAgent.shellView",
+          "group": "navigation@4"
+        }
+      ]
+    },
     "chatParticipants": [
       {
         "id": "atun-agent.atun",
@@ -123,7 +153,7 @@
         {
           "id": "atunAgentSidebar",
           "title": "Atun Agent",
-          "icon": "assets/icons/ghost-chat.svg"
+          "icon": "assets/icons/logo/atunagent.svg"
         }
       ]
     },
