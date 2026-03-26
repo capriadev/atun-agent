@@ -2,6 +2,22 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.2.0] - 2026-03-26
+
+### Changed
+- Redesigned the sidebar into a more editor-native shell driven by mapped VS Code theme tokens.
+- Replaced the separate provider/model chat selectors with a single grouped model selector by provider connection.
+- The native settings title action now opens the provider setup flow directly.
+
+### Added
+- Composer shell inspired by integrated agent extensions:
+  - expandable input
+  - token estimate
+  - context usage indicator
+  - inline `#`, `/` and `@` prompt actions
+- Local debug workflow documentation in the README.
+- Workspace debug configuration to launch the extension with `F5`.
+
 ## [2.1.1] - 2026-03-26
 
 ### Changed

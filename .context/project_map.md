@@ -115,7 +115,15 @@ The long-term direction is to increase native/editor-level integration while kee
 
 - root workspace wrapper drives build/package commands
 - extension output is packaged as versioned VSIX files under `packages/`
-- current shipped line: `2.1.1`
+- current shipped line: `2.2.0`
+
+## Local Debug Workflow
+
+- `.vscode/launch.json`
+  - `Run Extension` launches an Extension Development Host against `atunagent/`
+
+- `.vscode/tasks.json`
+  - background `npm: watch` task feeds the extension debug loop used by `F5`
 
 ## Vision
 

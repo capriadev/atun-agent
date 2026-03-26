@@ -2,7 +2,7 @@
 
 ## Active Task
 
-Consolidate the native-themed shell redesign and define the next native/editor integration steps on top of the new grouped model selector.
+Close the `2.2.0` release line and document the fastest local debug workflow for the extension host.
 
 ## What Was Being Worked On Before This
 
@@ -15,36 +15,33 @@ The last completed feature work was release `2.1.1`:
 
 ## Last Thing Modified
 
-The latest completed feature changes are:
+The latest completed release changes are:
 
-- the sidebar webview was redesigned into a minimal chat shell driven by mapped `--vscode-*` tokens
-- provider and model selection were unified into a single grouped model selector
-- the native settings title action now opens the provider setup flow instead of being a stub
-- compile and local VSIX packaging passed after the redesign
+- version numbers were bumped to `2.2.0`
+- changelog and README were updated for the redesigned shell
+- `.vscode/launch.json` and `.vscode/tasks.json` were added for `F5` / `Run Extension`
+- compile and local VSIX packaging passed for `2.2.0`
 
 ## Decision Made And Why
 
 Decision:
-- keep the current extension architecture
-- treat the webview as a native-looking shell instead of a custom app panel
-- map theme usage through local `--atun-*` variables backed by `--vscode-*`
-- remove the separate provider selector from chat and keep model switching grouped by provider connection
-- use the native title action for provider management entry instead of another HTML toolbar button
+- keep the release line aligned with the real feature set instead of leaving the redesign under `2.1.1`
+- document both debug entry points:
+  - `F5` / `Run Extension`
+  - direct CLI launch with `code --extensionDevelopmentPath`
 
 Why:
-- this matches the intended architecture used by agent-style extensions
-- it reduces duplicated selectors in the chat shell
-- it keeps the provider/runtime backend intact while allowing a major UI redesign
-- it makes the UI less visually isolated from the editor theme
+- the packaged artifact and manifest must reflect the actual shipped redesign
+- extension work is much faster when the Extension Development Host flow is explicit and checked into the repo
 
 ## Logical Next Step
 
 Current execution order:
 
-1. wire real behavior for the remaining native/editor actions: history, ghost chat, access mode and agent mode
-2. decide which controls stay in webview and which move to native `QuickPick` or `TreeView`
-3. refine the grouped model selector and message history interactions after visual review
+1. wire real behavior for history, ghost chat, access mode and agent mode
+2. decide which controls move from the webview into native `QuickPick` or `TreeView`
+3. review the debug loop after using the new `Run Extension` config in practice
 
 ## Session Close Note
 
-This session completed the first native-themed shell pass with recoverable commits and successful packaging.
+This session closed version `2.2.0` and added a checked-in extension-host debug workflow.

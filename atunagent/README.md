@@ -61,6 +61,34 @@ npm run compile
 npm test
 ```
 
+### Debug extension host
+
+Fastest local workflow inside VS Code:
+
+1. Open the repo root in VS Code.
+2. Start the `Run Extension` launch config with `F5`.
+3. A new Extension Development Host window opens with Atun Agent loaded.
+
+If you prefer command line only, first build the extension:
+
+```bash
+npm run compile
+```
+
+Then open an Extension Development Host from the repo root:
+
+```powershell
+code --new-window --extensionDevelopmentPath "$PWD/atunagent"
+```
+
+Or launch the debug session from VS Code with the `Run Extension` configuration.
+
+Notes:
+
+- `Ctrl+Shift+F5` restarts the Extension Development Host.
+- The launch config uses the repo task `npm: watch` so code rebuilds while you edit.
+- Breakpoints go in files such as `src/extension.ts`, `src/chat-view.ts` and `src/sidebar-view-model.ts`.
+
 ## Troubleshooting
 
 - If the sidebar does not list Groq models, verify the API key and confirm the editor can reach `https://api.groq.com`.
