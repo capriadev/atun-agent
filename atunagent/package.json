@@ -47,22 +47,34 @@
       {
         "command": "atun-agent.view.settings",
         "title": "Atun Agent: Settings",
-        "icon": "assets/icons/setting.svg"
+        "icon": {
+          "light": "assets/icons/setting-light.svg",
+          "dark": "assets/icons/setting-dark.svg"
+        }
       },
       {
         "command": "atun-agent.view.history",
         "title": "Atun Agent: History",
-        "icon": "assets/icons/fishing-history.svg"
+        "icon": {
+          "light": "assets/icons/fishing-history-light.svg",
+          "dark": "assets/icons/fishing-history-dark.svg"
+        }
       },
       {
         "command": "atun-agent.view.newChat",
         "title": "Atun Agent: New Chat",
-        "icon": "assets/icons/new-chat.svg"
+        "icon": {
+          "light": "assets/icons/new-chat-light.svg",
+          "dark": "assets/icons/new-chat-dark.svg"
+        }
       },
       {
         "command": "atun-agent.view.ghostChat",
         "title": "Atun Agent: Ghost Chat",
-        "icon": "assets/icons/ghost-chat.svg"
+        "icon": {
+          "light": "assets/icons/ghost-chat-light.svg",
+          "dark": "assets/icons/ghost-chat-dark.svg"
+        }
       },
       {
         "command": "atun-agent.focusSidebar",
