@@ -2,6 +2,12 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.2.1] - 2026-03-26
+
+### Fixed
+- Switched native view-title toolbar icons to explicit light/dark assets so they render correctly across VS Code themes.
+- Removed page-level sidebar scrolling so the chat shell keeps scrolling localized to the message history and internal lists.
+
 ## [2.2.0] - 2026-03-26
 
 ### Changed
