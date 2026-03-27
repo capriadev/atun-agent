@@ -115,7 +115,7 @@ The long-term direction is to increase native/editor-level integration while kee
 
 - root workspace wrapper drives build/package commands
 - extension output is packaged as versioned VSIX files under `packages/`
-- current shipped line: `2.2.2`
+- current shipped line: `2.2.3`
 
 ## Local Debug Workflow
 

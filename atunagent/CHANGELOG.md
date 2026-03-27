@@ -2,6 +2,12 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.2.3] - 2026-03-27
+
+### Fixed
+- Added a stronger onboarding recovery path so the primary button rehydrates persisted chat state when provider data already exists.
+- Tightened the onboarding theme mapping so text, logo, borders and decorative surfaces derive more consistently from VS Code theme tokens.
+
 ## [2.2.2] - 2026-03-27
 
 ### Fixed
