@@ -69,6 +69,13 @@ export class SidebarViewModel {
 
 	public async openProviderPicker(): Promise<void> {
 		this.error = undefined;
+		const storedConnections = await this.providers.listConnections();
+		if (storedConnections.length > 0) {
+			await this.refreshFromStorage();
+			this.emitDidChange();
+			return;
+		}
+
 		const providerCards = this.providers.listSupportedProviders();
 		if (providerCards.length === 1) {
 			await this.chooseProvider(providerCards[0].kind);
