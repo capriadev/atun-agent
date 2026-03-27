@@ -47,6 +47,7 @@ export class SidebarViewModel {
 	}
 
 	public async getState(): Promise<SidebarViewState> {
+		await this.ensureScreenMatchesStorage();
 		const modelSelectorOptions = await this.buildModelSelectorOptions();
 		return {
 			screen: this.screen,
@@ -383,6 +384,19 @@ export class SidebarViewModel {
 
 	private emitDidChange(): void {
 		this.onDidChangeEmitter.fire();
+	}
+
+	private async ensureScreenMatchesStorage(): Promise<void> {
+		if (this.screen !== 'onboarding') {
+			return;
+		}
+
+		const storedConnections = await this.providers.listConnections();
+		if (storedConnections.length === 0) {
+			return;
+		}
+
+		await this.refreshFromStorage();
 	}
 }
 
