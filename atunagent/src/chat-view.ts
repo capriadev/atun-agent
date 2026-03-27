@@ -113,7 +113,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
 
 	private getHtml(webview: vscode.Webview): string {
 		const nonce = createNonce();
-		const logo = webview.asWebviewUri(vscode.Uri.file(path.join(this.context.extensionPath, 'assets', 'icons', 'logo', 'atunagent.svg')));
+		const logoMarkup = getLogoMarkup();
 
 		return `<!DOCTYPE html>
 <html lang="en">
@@ -149,7 +149,8 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       --atun-font: var(--vscode-font-family);
       --atun-radius: 14px;
       --atun-radius-sm: 10px;
-      --atun-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+      --atun-shadow-color: var(--vscode-widget-shadow, rgba(0, 0, 0, 0.16));
+      --atun-stripe: var(--vscode-descriptionForeground);
     }
     * {
       box-sizing: border-box;
@@ -194,7 +195,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       border: 1px solid var(--atun-border);
       border-radius: var(--atun-radius);
       background: var(--atun-bg-elevated);
-      box-shadow: var(--atun-shadow);
+      box-shadow: 0 10px 28px var(--atun-shadow-color);
     }
     .onboarding {
       display: grid;
@@ -209,10 +210,16 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       display: grid;
       gap: 16px;
     }
-    .onboarding-card img {
+    .logo-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--atun-text);
+    }
+    .logo-mark svg {
       width: 78px;
       height: 78px;
-      margin: 0 auto;
+      display: block;
     }
     .stack {
       display: grid;
@@ -395,7 +402,13 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       padding: 24px;
       text-align: center;
       background:
-        repeating-linear-gradient(135deg, transparent 0, transparent 32px, rgba(127, 127, 127, 0.18) 32px, rgba(127, 127, 127, 0.18) 38px),
+        repeating-linear-gradient(
+          135deg,
+          transparent 0,
+          transparent 32px,
+          color-mix(in srgb, var(--atun-stripe) 18%, transparent) 32px,
+          color-mix(in srgb, var(--atun-stripe) 18%, transparent) 38px
+        ),
         var(--atun-panel);
     }
     .history-empty[hidden] {
@@ -655,7 +668,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
 <body>
   <section id="screen-onboarding" class="screen onboarding">
     <div class="surface onboarding-card">
-      <img src="${logo}" alt="Atun Agent logo" />
+      <span class="logo-mark" aria-hidden="true">${logoMarkup}</span>
       <div class="stack">
         <h1 class="title">Atun Agent</h1>
         <p class="subtitle">Conecta una cuenta, habilita modelos y usa el chat local dentro del editor.</p>
@@ -1088,3 +1101,10 @@ function createNonce(): string {
 	return result;
 }
 
+function getLogoMarkup(): string {
+	return [
+		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">',
+		'<path d="M2 16s9-15 20-4C11 23 2 8 2 8"/>',
+		'</svg>',
+	].join('');
+}
