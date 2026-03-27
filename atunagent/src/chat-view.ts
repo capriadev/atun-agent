@@ -129,9 +129,10 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       --atun-bg-elevated: var(--vscode-editorWidget-background, var(--vscode-editor-background));
       --atun-panel: var(--vscode-editor-background);
       --atun-panel-muted: var(--vscode-input-background);
-      --atun-border: var(--vscode-panel-border, var(--vscode-editorGroup-border));
-      --atun-border-strong: var(--vscode-contrastBorder, var(--vscode-panel-border));
-      --atun-text: var(--vscode-sideBar-foreground);
+      --atun-border: var(--vscode-widget-border, var(--vscode-panel-border, var(--vscode-editorGroup-border)));
+      --atun-border-strong: var(--vscode-contrastBorder, var(--vscode-widget-border, var(--vscode-panel-border)));
+      --atun-text: var(--vscode-foreground);
+      --atun-text-strong: var(--vscode-editor-foreground, var(--vscode-foreground));
       --atun-muted: var(--vscode-descriptionForeground);
       --atun-accent: var(--vscode-button-background);
       --atun-accent-text: var(--vscode-button-foreground);
@@ -143,14 +144,14 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       --atun-link: var(--vscode-textLink-foreground);
       --atun-error: var(--vscode-errorForeground);
       --atun-warning-border: var(--vscode-inputValidation-warningBorder, var(--vscode-panel-border));
-      --atun-scrollbar: var(--vscode-scrollbarSlider-background, rgba(128, 128, 128, 0.4));
-      --atun-scrollbar-hover: var(--vscode-scrollbarSlider-hoverBackground, rgba(128, 128, 128, 0.6));
+      --atun-scrollbar: var(--vscode-scrollbarSlider-background, color-mix(in srgb, var(--atun-muted) 42%, transparent));
+      --atun-scrollbar-hover: var(--vscode-scrollbarSlider-hoverBackground, color-mix(in srgb, var(--atun-muted) 58%, transparent));
       --atun-focus: var(--vscode-focusBorder);
       --atun-font: var(--vscode-font-family);
       --atun-radius: 14px;
       --atun-radius-sm: 10px;
-      --atun-shadow-color: var(--vscode-widget-shadow, rgba(0, 0, 0, 0.16));
-      --atun-stripe: var(--vscode-descriptionForeground);
+      --atun-shadow-color: var(--vscode-widget-shadow, color-mix(in srgb, var(--atun-text-strong) 16%, transparent));
+      --atun-stripe: color-mix(in srgb, var(--atun-muted) 42%, transparent);
     }
     * {
       box-sizing: border-box;
@@ -161,7 +162,9 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
     body {
       margin: 0;
       height: 100vh;
-      background: var(--atun-bg);
+      background:
+        radial-gradient(circle at top, color-mix(in srgb, var(--atun-accent) 10%, transparent), transparent 46%),
+        var(--atun-bg);
       color: var(--atun-text);
       font: 12px/1.45 var(--atun-font);
       overflow: hidden;
@@ -194,7 +197,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
     .surface {
       border: 1px solid var(--atun-border);
       border-radius: var(--atun-radius);
-      background: var(--atun-bg-elevated);
+      background: color-mix(in srgb, var(--atun-bg-elevated) 92%, var(--atun-bg));
       box-shadow: 0 10px 28px var(--atun-shadow-color);
     }
     .onboarding {
@@ -214,7 +217,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: var(--atun-text);
+      color: var(--atun-text-strong);
     }
     .logo-mark svg {
       width: 78px;
@@ -232,6 +235,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       letter-spacing: 0.08em;
       text-transform: uppercase;
       font-weight: 700;
+      color: var(--atun-text-strong);
     }
     .subtitle {
       margin: 0;
@@ -290,6 +294,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       line-height: 1.1;
       text-transform: uppercase;
       letter-spacing: 0.08em;
+      color: var(--atun-text-strong);
     }
     .icon-lite {
       width: auto;
@@ -319,6 +324,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       font-size: 13px;
       letter-spacing: 0.04em;
       text-transform: uppercase;
+      color: var(--atun-text-strong);
     }
     .config-panel {
       padding: 14px;
@@ -406,8 +412,8 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
           135deg,
           transparent 0,
           transparent 32px,
-          color-mix(in srgb, var(--atun-stripe) 18%, transparent) 32px,
-          color-mix(in srgb, var(--atun-stripe) 18%, transparent) 38px
+          var(--atun-stripe) 32px,
+          var(--atun-stripe) 38px
         ),
         var(--atun-panel);
     }
@@ -423,6 +429,7 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       letter-spacing: 0.08em;
       text-transform: uppercase;
       line-height: 0.95;
+      color: var(--atun-text-strong);
     }
     .empty-arrow {
       display: inline-flex;
