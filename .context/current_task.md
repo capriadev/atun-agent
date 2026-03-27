@@ -2,7 +2,7 @@
 
 ## Active Task
 
-Persist the release workflow rule in `.context/` and cut the next packaged version after the latest sidebar fixes.
+Close the `2.2.2` patch release after fixing onboarding state restoration and theme adaptation issues.
 
 ## What Was Being Worked On Before This
 
@@ -17,19 +17,19 @@ The last completed feature work was release `2.1.1`:
 
 The latest completed code changes are:
 
-- native toolbar icons were switched to theme-aware light/dark assets
-- page-level scrolling was removed so the chat shell owns scrolling
-- each of those changes landed in its own commit
+- persisted data now forces a state re-sync instead of leaving the sidebar on onboarding
+- the onboarding logo and decorative colors now follow the VS Code theme correctly
+- both fixes landed in separate commits before packaging
 
 ## Decision Made And Why
 
 Decision:
-- persist one more workflow rule: a finished change set should end with the next packaged release ready
-- cut a patch release because the last completed work changed user-visible behavior but did not bump the shipped version
+- cut another patch release because the latest fixes are user-visible and affect startup reliability
+- keep functional and visual fixes separated into independent commits before release
 
 Why:
-- the repo is being used iteratively and the installable artifact should stay synchronized with the latest safe state
-- the icon and layout fixes are user-facing and belong in the next packaged build
+- the installable artifact must match the latest safe fixes
+- debugging startup and theme regressions is easier when each fix has its own rollback point
 
 ## Logical Next Step
 

@@ -2,6 +2,12 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.2.2] - 2026-03-27
+
+### Fixed
+- Restored the persisted sidebar state more defensively so existing provider data no longer leaves the UI stuck on onboarding.
+- Removed remaining onboarding visual mismatches by making the logo and decorative shell colors follow VS Code theme-driven variables.
+
 ## [2.2.1] - 2026-03-26
 
 ### Fixed
