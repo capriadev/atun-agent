@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
 import { AtunAgentState } from './agent-state';
 import { registerAtunChatParticipant } from './chat-participant';
-import { AtunShellViewProvider } from './chat-view';
 import { detectHostSupport } from './host-support';
 import { ProviderRegistry } from './providers/provider-registry';
+import { AtunShellViewProvider } from './sidebar/atun-shell-view-provider';
 import { SidebarViewModel } from './sidebar/sidebar-view-model';
 import { LocalDatabase } from './storage/local-database';
 import { SecretsService } from './storage/secrets-service';
