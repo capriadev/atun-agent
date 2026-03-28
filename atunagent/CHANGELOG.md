@@ -2,6 +2,12 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.2.5] - 2026-03-27
+
+### Changed
+- Removed the standalone onboarding, provider picker and provider configuration pages from the sidebar webview.
+- Kept the product on a single persistent chat surface and moved provider setup into an inline panel inside that chat shell.
+
 ## [2.2.4] - 2026-03-27
 
 ### Fixed

@@ -23,7 +23,7 @@ There are two layers:
 - exposes a minimal `@atun` native chat participant as a secondary surface
 
 2. Sidebar/webview layer
-- renders onboarding, provider setup and chat UI
+- renders a single chat surface with inline provider setup
 - sends user actions back to the extension host
 - receives serialized state from the extension host
 
@@ -39,7 +39,8 @@ There are two layers:
 ### Sidebar UI
 - `atunagent/src/chat-view.ts`
   - webview HTML, CSS and client-side message bridge
-  - screen flow: onboarding, provider picker, provider config, chat
+  - single-page chat shell
+  - inline provider setup panel shown inside the chat surface when setup or provider management is needed
   - native-themed shell built from local `--atun-*` variables mapped to `--vscode-*`
   - grouped model selector by provider connection inside the chat footer
 
@@ -91,8 +92,8 @@ Current integration points:
 
 Current chat shell behavior:
 
-- onboarding handles first provider connection
-- provider configuration remains a webview flow
+- one persistent chat surface is always rendered
+- first-time setup and provider management now open inside the same chat surface instead of switching to standalone pages
 - active chat uses one grouped model selector instead of separate provider/model dropdowns
 - provider management entry now also exists through the native settings title action
 
@@ -115,7 +116,7 @@ The long-term direction is to increase native/editor-level integration while kee
 
 - root workspace wrapper drives build/package commands
 - extension output is packaged as versioned VSIX files under `packages/`
-- current shipped line: `2.2.4`
+- current shipped line: `2.2.5`
 
 ## Local Debug Workflow
 

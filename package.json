@@ -1,7 +1,7 @@
 {
   "name": "atun-agent-workspace",
   "private": true,
-  "version": "2.2.4",
+  "version": "2.2.5",
   "description": "Workspace wrapper for Atun Agent VS Code extension",
   "scripts": {
     "install:ext": "npm --prefix atunagent install",
