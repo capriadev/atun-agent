@@ -344,6 +344,9 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       min-height: 0;
       overflow: hidden;
     }
+    .setup-panel[hidden] {
+      display: none;
+    }
     .field {
       display: grid;
       gap: 6px;
@@ -684,60 +687,33 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
   </style>
 </head>
 <body>
-  <section id="screen-onboarding" class="screen onboarding">
-    <div class="surface onboarding-card">
-      <span class="logo-mark" aria-hidden="true">${logoMarkup}</span>
-      <div class="stack">
-        <h1 class="title">Atun Agent</h1>
-        <p class="subtitle">Conecta una cuenta, habilita modelos y usa el chat local dentro del editor.</p>
-      </div>
-      <button id="startConnect" class="button primary">Anadir API / API Connect</button>
-    </div>
-  </section>
-
-  <section id="screen-provider-picker" class="screen picker">
-    <div class="toolbar-row">
-      <div class="stack">
-        <h1>Agregar proveedor</h1>
-        <p class="subtitle">La base del runtime arranca con Groq.</p>
-      </div>
-      <button id="pickerBack" class="icon-lite">Volver</button>
-    </div>
-    <button id="groqCard" class="provider-card">
-      <strong>Groq</strong>
-      <span class="subtitle">Lista de modelos y chat por streaming.</span>
-    </button>
-  </section>
-
-  <section id="screen-provider-config" class="screen config">
-    <div class="toolbar-row">
-      <div class="stack">
-        <h1>Configuracion</h1>
-        <p class="subtitle">Define el nombre de la conexion y marca los modelos disponibles.</p>
-      </div>
-      <button id="configBack" class="icon-lite">Volver</button>
-    </div>
-    <div class="surface config-panel">
-      <div class="field">
-        <label for="displayName">Nombre personalizado</label>
-        <input id="displayName" class="input" type="text" placeholder="Groq Juan" />
-      </div>
-      <div class="field">
-        <label for="apiKey">API</label>
-        <input id="apiKey" class="input" type="password" placeholder="gsk_..." />
-      </div>
-      <div id="modelsHint" class="hint">Al ingresar la API key se cargaran los modelos disponibles.</div>
-      <div id="providerError" class="notice" hidden></div>
-      <div id="modelsWrap" class="models"></div>
-      <div class="button-row">
-        <button id="refreshModels" class="button">Actualizar modelos</button>
-        <button id="saveConnection" class="button primary">Aceptar</button>
-      </div>
-    </div>
-  </section>
-
-  <section id="screen-chat" class="screen chat-screen">
+  <section id="screen-chat" class="screen chat-screen active">
     <div class="chat-shell">
+      <div id="setupPanel" class="surface config-panel setup-panel" hidden>
+        <div class="toolbar-row">
+          <div class="stack">
+            <span class="logo-mark" aria-hidden="true">${logoMarkup}</span>
+            <h1>Atun Agent</h1>
+            <p id="setupSubtitle" class="subtitle">Conecta Groq y habilita al menos un modelo para empezar.</p>
+          </div>
+          <button id="closeSetup" class="icon-lite">Volver</button>
+        </div>
+        <div class="field">
+          <label for="displayName">Nombre personalizado</label>
+          <input id="displayName" class="input" type="text" placeholder="Groq Juan" />
+        </div>
+        <div class="field">
+          <label for="apiKey">API</label>
+          <input id="apiKey" class="input" type="password" placeholder="gsk_..." />
+        </div>
+        <div id="modelsHint" class="hint">Al ingresar la API key se cargaran los modelos disponibles.</div>
+        <div id="providerError" class="notice" hidden></div>
+        <div id="modelsWrap" class="models"></div>
+        <div class="button-row">
+          <button id="refreshModels" class="button">Actualizar modelos</button>
+          <button id="saveConnection" class="button primary">Aceptar</button>
+        </div>
+      </div>
       <div id="chatError" class="notice" hidden></div>
       <div class="history-shell">
         <div id="emptyState" class="history-empty">
@@ -811,13 +787,9 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
 
     let validateTimer = undefined;
 
-    const screens = {
-      onboarding: document.getElementById('screen-onboarding'),
-      providerPicker: document.getElementById('screen-provider-picker'),
-      providerConfig: document.getElementById('screen-provider-config'),
-      chat: document.getElementById('screen-chat')
-    };
-
+    const setupPanel = document.getElementById('setupPanel');
+    const setupSubtitle = document.getElementById('setupSubtitle');
+    const closeSetup = document.getElementById('closeSetup');
     const displayName = document.getElementById('displayName');
     const apiKey = document.getElementById('apiKey');
     const modelsWrap = document.getElementById('modelsWrap');
@@ -838,13 +810,6 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
     const openNativeChat = document.getElementById('openNativeChat');
     const insertButtons = Array.from(document.querySelectorAll('[data-insert]'));
 
-    function setScreen(next) {
-      screens.onboarding.classList.toggle('active', next === 'onboarding');
-      screens.providerPicker.classList.toggle('active', next === 'provider-picker');
-      screens.providerConfig.classList.toggle('active', next === 'provider-config');
-      screens.chat.classList.toggle('active', next === 'chat');
-    }
-
     function estimateInputTokens() {
       const inputChars = composer.value.trim().length;
       if (!inputChars) {
@@ -861,6 +826,13 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
     }
 
     function renderProviderConfig() {
+      const showSetupPanel = state.connections.length === 0 || state.screen !== 'chat';
+      setupPanel.hidden = !showSetupPanel;
+      closeSetup.hidden = state.connections.length === 0;
+      setupSubtitle.textContent = state.connections.length === 0
+        ? 'Conecta Groq y habilita al menos un modelo para empezar.'
+        : 'Agrega otra conexion o ajusta los modelos habilitados sin salir del chat.';
+
       displayName.value = state.draftConfig.displayName || '';
       apiKey.value = state.draftConfig.apiKey || '';
       providerError.hidden = !state.error;
@@ -992,7 +964,6 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
     }
 
     function render() {
-      setScreen(state.screen);
       renderProviderConfig();
       renderChat();
     }
@@ -1025,17 +996,8 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
       renderChat();
     }
 
-    document.getElementById('startConnect').addEventListener('click', () => {
-      vscode.postMessage({ type: 'openProviderPicker' });
-    });
-    document.getElementById('pickerBack').addEventListener('click', () => {
+    closeSetup.addEventListener('click', () => {
       vscode.postMessage({ type: 'back' });
-    });
-    document.getElementById('configBack').addEventListener('click', () => {
-      vscode.postMessage({ type: 'back' });
-    });
-    document.getElementById('groqCard').addEventListener('click', () => {
-      vscode.postMessage({ type: 'chooseProvider', providerKind: 'groq' });
     });
     document.getElementById('newChat').addEventListener('click', () => {
       vscode.postMessage({ type: 'newChat' });
