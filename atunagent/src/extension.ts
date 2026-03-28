@@ -31,7 +31,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(AtunShellViewProvider.viewType, shellViewProvider, {
-			webviewOptions: { retainContextWhenHidden: true },
+			webviewOptions: { retainContextWhenHidden: false },
 		}),
 		sidebarViewModel.onDidChange(() => shellViewProvider.refresh()),
 	);

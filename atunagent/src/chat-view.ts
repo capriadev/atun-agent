@@ -36,15 +36,26 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
 			enableScripts: true,
 			localResourceRoots: [vscode.Uri.file(path.join(this.context.extensionPath, 'assets'))],
 		};
-		view.webview.html = this.getHtml(view.webview);
+		this.renderWebview(view);
 		view.webview.onDidReceiveMessage((message: IncomingMessage) => {
 			void this.handleMessage(message);
+		});
+		view.onDidChangeVisibility(() => {
+			if (!view.visible) {
+				return;
+			}
+			this.renderWebview(view);
+			void this.postState();
 		});
 		await this.postState();
 	}
 
 	public refresh(): void {
 		void this.postState();
+	}
+
+	private renderWebview(view: vscode.WebviewView): void {
+		view.webview.html = this.getHtml(view.webview);
 	}
 
 	private async handleMessage(message: IncomingMessage): Promise<void> {
