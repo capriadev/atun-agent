@@ -9,7 +9,7 @@ Atun Agent is a VS Code extension focused on a local-first agent workflow:
 - provider-based chat runtime, starting with Groq
 - native editor integration where it adds value, without depending on it as the main product surface
 
-The current goal is to keep moving from a webview-only prototype toward something that feels more editor-native, similar in behavior and placement to other AI extensions.
+The current goal is to keep moving from a webview-heavy prototype toward a modular extension architecture that can absorb more providers, services and native integrations without centralizing everything in `extension.ts`.
 
 ## Architecture
 
@@ -17,7 +17,7 @@ There are two layers:
 
 1. Extension host layer
 - activates the extension
-- initializes persistence and services
+- composes bootstrap services
 - registers commands and native view-title actions
 - owns the webview bridge
 - exposes a minimal `@atun` native chat participant as a secondary surface
@@ -31,38 +31,51 @@ There are two layers:
 
 ### Entry and orchestration
 - `atunagent/src/extension.ts`
-  - extension activation
-  - service construction
-  - command registration
-  - sidebar provider registration
+  - thin activation entrypoint
+  - composes bootstrap, commands and sidebar registration
+
+- `atunagent/src/bootstrap/create-extension-services.ts`
+  - builds long-lived services for the extension host
+  - initializes persistence, providers and sidebar state
+
+- `atunagent/src/commands/register-commands.ts`
+  - owns command registration
+  - owns sidebar focus/open helpers and first-activation reveal logic
+
+### Shared contracts
+- `atunagent/src/core/types.ts`
+  - shared extension types used across state, providers, storage and sidebar modules
 
 ### Sidebar UI
-- `atunagent/src/chat-view.ts`
-  - webview HTML, CSS and client-side message bridge
-  - single-page chat shell
-  - inline provider setup panel shown inside the chat surface when setup or provider management is needed
-  - native-themed shell built from local `--atun-*` variables mapped to `--vscode-*`
-  - grouped model selector by provider connection inside the chat footer
-
-- `atunagent/src/sidebar-view-model.ts`
+- `atunagent/src/sidebar/sidebar-view-model.ts`
   - main state coordinator for the sidebar
   - loads state from persistence
   - validates provider drafts
   - creates chats and sends messages
 
+- `atunagent/src/sidebar/atun-shell-view-provider.ts`
+  - VS Code webview provider
+  - bridge between host messages and sidebar view-model
+
+- `atunagent/src/sidebar/webview/chat-shell-html.ts`
+  - HTML/CSS/client template for the chat shell
+
+- `atunagent/src/sidebar/webview/chat-shell-protocol.ts`
+  - typed incoming messages from the webview to the host
+
 ### Persistence and secrets
-- `atunagent/src/local-database.ts`
+- `atunagent/src/storage/local-database.ts`
   - local SQLite wrapper using `sql.js`
   - schema for settings, connections, models, sessions and messages
 
-- `atunagent/src/secrets-service.ts`
+- `atunagent/src/storage/secrets-service.ts`
   - stores API keys in VS Code `SecretStorage`
 
 ### Provider backend
-- `atunagent/src/provider-registry.ts`
+- `atunagent/src/providers/provider-registry.ts`
   - provider-agnostic contract for validation, model listing and chat streaming
 
-- `atunagent/src/groq-provider.ts`
+- `atunagent/src/providers/groq-provider.ts`
   - Groq adapter
   - model discovery
   - streaming chat completions
@@ -93,7 +106,7 @@ Current integration points:
 Current chat shell behavior:
 
 - one persistent chat surface is always rendered
-- first-time setup and provider management now open inside the same chat surface instead of switching to standalone pages
+- first-time setup and provider management open inside the same chat surface instead of switching to standalone pages
 - active chat uses one grouped model selector instead of separate provider/model dropdowns
 - provider management entry now also exists through the native settings title action
 
@@ -116,7 +129,7 @@ The long-term direction is to increase native/editor-level integration while kee
 
 - root workspace wrapper drives build/package commands
 - extension output is packaged as versioned VSIX files under `packages/`
-- current shipped line: `2.2.5`
+- current shipped line: `2.3.0`
 
 ## Local Debug Workflow
 

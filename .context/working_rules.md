@@ -23,6 +23,12 @@
 ## Structural Conventions
 
 - Keep the orchestration entry in `src/extension.ts`.
+- Keep `src/extension.ts` thin; bootstrap and command registration should live in dedicated modules.
+- Group modules by domain:
+  - `src/core` for shared contracts
+  - `src/storage` for persistence and secrets
+  - `src/providers` for provider adapters and registry logic
+  - `src/sidebar` for view-model, webview provider and UI bridge code
 - Keep state coordination in dedicated view-model/service classes, not embedded inside raw HTML strings when avoidable.
 - Keep provider logic behind `ProviderRegistry` so additional providers can be added without rewriting the sidebar flow.
 - Keep database responsibilities inside `LocalDatabase`.

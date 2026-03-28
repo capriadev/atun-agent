@@ -2,6 +2,19 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.3.0] - 2026-03-28
+
+### Changed
+- Reorganized the extension into domain-oriented modules for long-term scale:
+  - `src/core`
+  - `src/storage`
+  - `src/providers`
+  - `src/sidebar`
+  - `src/bootstrap`
+  - `src/commands`
+- Split the sidebar webview layer into a dedicated provider, typed webview protocol and isolated HTML template module.
+- Reduced `extension.ts` to a thin activation entrypoint that composes services and command registration.
+
 ## [2.2.5] - 2026-03-27
 
 ### Changed

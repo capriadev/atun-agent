@@ -2,42 +2,45 @@
 
 ## Active Task
 
-Close the `2.2.5` patch release after collapsing the sidebar into a single chat surface.
+Close the `2.3.0` release after modularizing the extension for larger-scale growth.
 
 ## What Was Being Worked On Before This
 
-The previous completed patch work was release `2.2.4`:
+The previous completed product work was release `2.2.5`:
 
-- retained sidebar webview context was disabled
-- the sidebar HTML is re-rendered when the view becomes visible again
-- the goal was to avoid stale onboarding UIs surviving extension reloads
+- the sidebar was collapsed into a single persistent chat surface
+- provider setup moved inside the chat shell
+- the packaged artifact was cut as a standalone rollback point
 
 ## Last Thing Modified
 
 The latest completed code changes are:
 
-- removed the standalone onboarding, provider picker and provider config pages from the webview
-- kept a single chat-agent surface rendered at all times
-- moved provider setup into an inline setup panel inside the chat shell
+- moved shared contracts into `src/core/`
+- moved persistence into `src/storage/`
+- moved providers into `src/providers/`
+- moved sidebar state and webview modules into `src/sidebar/`
+- extracted bootstrap and command registration out of `extension.ts`
 
 ## Decision Made And Why
 
 Decision:
-- stop navigating between multiple sidebar pages and keep setup embedded in the chat UI
-- cut a new packaged patch release immediately after the UI simplification
+- modularize now, while the feature surface is still small enough to move safely
+- split the refactor into separate commits for domain moves, webview extraction and extension bootstrap cleanup
+- release the refactor as `2.3.0`
 
 Why:
-- a single persistent surface is closer to the intended integrated-agent UX
-- fewer page transitions reduce startup and bridge edge cases in the webview
+- growth in providers, services and native integrations will get expensive if everything keeps living beside `extension.ts`
+- smaller modules reduce refactor risk and make future UI/backend splits cheaper
 
 ## Logical Next Step
 
 Current execution order:
 
-1. package and ship `2.2.5`
-2. validate the single-surface setup flow against existing persisted provider data
-3. continue moving controls that belong in native VS Code surfaces out of the webview
+1. package and ship `2.3.0`
+2. validate that the refactor did not change provider setup or chat behavior
+3. continue splitting the sidebar template into smaller UI modules when real features land
 
 ## Session Close Note
 
-This session removes the remaining multi-page sidebar flow in favor of one persistent chat surface with inline setup.
+This session converts the codebase from a flat prototype layout into domain-oriented modules suitable for a larger extension.
