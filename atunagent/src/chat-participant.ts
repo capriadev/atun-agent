@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { LocalDatabase } from './local-database';
+import { LocalDatabase } from './storage/local-database';
 
 const CHAT_PARTICIPANT_ID = 'atun-agent.atun';
 

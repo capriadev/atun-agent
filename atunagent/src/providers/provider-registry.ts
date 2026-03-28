@@ -1,6 +1,6 @@
 import { GroqProviderAdapter } from './groq-provider';
-import { LocalDatabase } from './local-database';
-import { SecretsService } from './secrets-service';
+import { LocalDatabase } from '../storage/local-database';
+import { SecretsService } from '../storage/secrets-service';
 import type {
 	ChatCompletionInputMessage,
 	ProviderCard,
@@ -9,7 +9,7 @@ import type {
 	ProviderKind,
 	ProviderModel,
 	ProviderValidationResult,
-} from './types';
+} from '../core/types';
 
 interface StreamChatInput {
 	connectionId: string;

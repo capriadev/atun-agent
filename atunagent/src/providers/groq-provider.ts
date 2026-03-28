@@ -1,4 +1,4 @@
-import type { ChatCompletionInputMessage, ProviderModel } from './types';
+import type { ChatCompletionInputMessage, ProviderModel } from '../core/types';
 
 export class GroqProviderAdapter {
 	private readonly baseUrl = 'https://api.groq.com/openai/v1';

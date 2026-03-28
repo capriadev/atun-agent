@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import type { AccessMode, AgentMode, TokenBreakdown } from './types';
+import type { AccessMode, AgentMode, TokenBreakdown } from './core/types';
 
 const ACCESS_KEY = 'atunAgent.accessMode';
 const THINKING_KEY = 'atunAgent.thinkingMode';

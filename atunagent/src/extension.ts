@@ -3,10 +3,10 @@ import { AtunAgentState } from './agent-state';
 import { registerAtunChatParticipant } from './chat-participant';
 import { AtunShellViewProvider } from './chat-view';
 import { detectHostSupport } from './host-support';
-import { LocalDatabase } from './local-database';
-import { ProviderRegistry } from './provider-registry';
-import { SecretsService } from './secrets-service';
-import { SidebarViewModel } from './sidebar-view-model';
+import { ProviderRegistry } from './providers/provider-registry';
+import { SidebarViewModel } from './sidebar/sidebar-view-model';
+import { LocalDatabase } from './storage/local-database';
+import { SecretsService } from './storage/secrets-service';
 import { WorkspaceTools, type WorkspaceActionResult } from './workspace-tools';
 
 const SHELL_CONTAINER_COMMAND = 'workbench.view.extension.atunAgentSidebar';

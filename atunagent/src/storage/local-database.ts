@@ -10,7 +10,7 @@ import type {
 	ProviderKind,
 	ProviderModel,
 	ProviderModelRecord,
-} from './types';
+} from '../core/types';
 
 interface LocalDatabaseOptions {
 	storagePath: string;

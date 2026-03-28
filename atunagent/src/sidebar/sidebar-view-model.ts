@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { LocalDatabase } from './local-database';
-import { ProviderRegistry } from './provider-registry';
+import { ProviderRegistry } from '../providers/provider-registry';
+import { LocalDatabase } from '../storage/local-database';
 import type {
 	ChatCompletionInputMessage,
 	ChatMessageRecord,
@@ -10,7 +10,7 @@ import type {
 	ProviderModel,
 	SidebarScreen,
 	SidebarViewState,
-} from './types';
+} from '../core/types';
 
 const DEFAULT_DRAFT: ProviderDraftConfig = {
 	providerKind: 'groq',

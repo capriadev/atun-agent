@@ -1,8 +1,8 @@
 import * as path from 'node:path';
 import * as vscode from 'vscode';
 import type { HostSupport } from './host-support';
-import { SidebarViewModel } from './sidebar-view-model';
-import type { ProviderKind, SidebarViewState } from './types';
+import { SidebarViewModel } from './sidebar/sidebar-view-model';
+import type { ProviderKind, SidebarViewState } from './core/types';
 
 type IncomingMessage =
 	| { type: 'ready' }

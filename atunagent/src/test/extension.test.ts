@@ -3,7 +3,7 @@ import * as fs from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
 import * as vscode from 'vscode';
-import { LocalDatabase } from '../local-database';
+import { LocalDatabase } from '../storage/local-database';
 
 suite('Extension Test Suite', () => {
 	test('Smoke test', () => {
