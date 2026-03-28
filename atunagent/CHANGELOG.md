@@ -2,6 +2,12 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.2.4] - 2026-03-27
+
+### Fixed
+- Disabled retained webview context for the sidebar so updated builds do not keep an older disconnected onboarding UI alive.
+- Re-render the sidebar HTML when the view becomes visible again, reducing stale webview state after reloads and upgrades.
+
 ## [2.2.3] - 2026-03-27
 
 ### Fixed
