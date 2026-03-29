@@ -41,8 +41,16 @@ export class AtunShellViewProvider implements vscode.WebviewViewProvider {
 		void this.postState();
 	}
 
+	public rerender(): void {
+		if (!this.view) {
+			return;
+		}
+		this.renderWebview(this.view);
+		void this.postState();
+	}
+
 	private renderWebview(view: vscode.WebviewView): void {
-		view.webview.html = createChatShellHtml(view.webview);
+		view.webview.html = createChatShellHtml(view.webview, this.context.extensionUri);
 	}
 
 	private async handleMessage(message: IncomingMessage): Promise<void> {

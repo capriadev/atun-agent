@@ -14,10 +14,11 @@ interface RegisterCommandsInput {
 	state: AtunAgentState;
 	tools: WorkspaceTools;
 	sidebarViewModel: SidebarViewModel;
+	shellViewProvider: AtunShellViewProvider;
 }
 
 export function registerAtunCommands(input: RegisterCommandsInput): void {
-	const { context, hostSupport, state, tools, sidebarViewModel } = input;
+	const { context, hostSupport, state, tools, sidebarViewModel, shellViewProvider } = input;
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('atun-agent.openChat', async () => {
@@ -42,6 +43,15 @@ export function registerAtunCommands(input: RegisterCommandsInput): void {
 		}),
 		vscode.commands.registerCommand('atun-agent.focusSidebar', async () => {
 			await safeFocusSidebar();
+		}),
+		vscode.commands.registerCommand('atun-agent.dev.reloadSidebar', async () => {
+			await safeFocusSidebar();
+			shellViewProvider.rerender();
+			void vscode.window.showInformationMessage('Atun sidebar webview reloaded.');
+		}),
+		vscode.commands.registerCommand('atun-agent.dev.openWebviewDevTools', async () => {
+			await safeFocusSidebar();
+			await vscode.commands.executeCommand('workbench.action.webview.openDeveloperTools');
 		}),
 		vscode.commands.registerCommand('atun-agent.stopResponse', async () => {
 			if (!sidebarViewModel.stopStreaming()) {

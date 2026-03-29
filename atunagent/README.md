@@ -87,7 +87,28 @@ Notes:
 
 - `Ctrl+Shift+F5` restarts the Extension Development Host.
 - The launch config uses the repo task `npm: watch` so code rebuilds while you edit.
-- Breakpoints go in files such as `src/extension.ts`, `src/chat-view.ts` and `src/sidebar-view-model.ts`.
+- Breakpoints go in files such as `src/extension.ts`, `src/sidebar/atun-shell-view-provider.ts` and `src/sidebar/sidebar-view-model.ts`.
+
+### Fast UI iteration
+
+For styles, spacing, layout and webview-only tweaks you do not need to package the extension every time:
+
+1. Start `Run Extension` with `F5`.
+2. Keep the watch task running in the repo.
+3. Edit:
+   - `assets/webview/chat-shell.css` for styles
+   - `assets/webview/chat-shell.js` for webview interaction
+   - `src/sidebar/webview/chat-shell-html.ts` only when the HTML structure changes
+4. In the Extension Development Host run:
+   - `Atun Agent: Reload Sidebar Webview`
+   - `Atun Agent: Open Webview DevTools`
+
+Recommended loop:
+
+- CSS/JS asset changes: save file, then run `Atun Agent: Reload Sidebar Webview`
+- TypeScript host changes: save file, let watch rebuild, then use `Ctrl+Shift+F5`
+
+This gives a much faster feedback cycle for visual work without cutting a VSIX on every tweak.
 
 ## Troubleshooting
 

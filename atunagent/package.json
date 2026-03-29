@@ -81,6 +81,14 @@
         "title": "Atun Agent: Focus Sidebar"
       },
       {
+        "command": "atun-agent.dev.reloadSidebar",
+        "title": "Atun Agent: Reload Sidebar Webview"
+      },
+      {
+        "command": "atun-agent.dev.openWebviewDevTools",
+        "title": "Atun Agent: Open Webview DevTools"
+      },
+      {
         "command": "atun-agent.stopResponse",
         "title": "Atun Agent: Stop Response"
       },

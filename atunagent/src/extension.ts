@@ -26,6 +26,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 		state: services.state,
 		tools: services.tools,
 		sidebarViewModel: services.sidebarViewModel,
+		shellViewProvider: services.shellViewProvider,
 	});
 
 	await revealSidebarOnFirstActivation(context);
