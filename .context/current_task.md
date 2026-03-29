@@ -2,45 +2,44 @@
 
 ## Active Task
 
-Close the `2.3.0` release after modularizing the extension for larger-scale growth.
+Close the `2.3.1` patch release after adding a fast sidebar UI reload workflow for visual iteration.
 
 ## What Was Being Worked On Before This
 
-The previous completed product work was release `2.2.5`:
+The previous completed product work was release `2.3.0`:
 
-- the sidebar was collapsed into a single persistent chat surface
-- provider setup moved inside the chat shell
-- the packaged artifact was cut as a standalone rollback point
+- the extension was modularized by domain
+- `extension.ts` became a thin composition entrypoint
+- the sidebar bridge and HTML template were separated
 
 ## Last Thing Modified
 
 The latest completed code changes are:
 
-- moved shared contracts into `src/core/`
-- moved persistence into `src/storage/`
-- moved providers into `src/providers/`
-- moved sidebar state and webview modules into `src/sidebar/`
-- extracted bootstrap and command registration out of `extension.ts`
+- moved the webview stylesheet into `assets/webview/chat-shell.css`
+- moved the webview client logic into `assets/webview/chat-shell.js`
+- added commands to reload the sidebar webview and open webview DevTools
+- documented the fast UI iteration loop in the README
 
 ## Decision Made And Why
 
 Decision:
-- modularize now, while the feature surface is still small enough to move safely
-- split the refactor into separate commits for domain moves, webview extraction and extension bootstrap cleanup
-- release the refactor as `2.3.0`
+- optimize for fast visual iteration without requiring a full package/install cycle
+- treat CSS and webview client behavior as static assets so the Development Host can read them directly from disk
+- ship this as a patch release on top of `2.3.0`
 
 Why:
-- growth in providers, services and native integrations will get expensive if everything keeps living beside `extension.ts`
-- smaller modules reduce refactor risk and make future UI/backend splits cheaper
+- styles and spacing change much faster than backend behavior
+- a direct reload loop is better suited for design work than restarting the entire extension for every tweak
 
 ## Logical Next Step
 
 Current execution order:
 
-1. package and ship `2.3.0`
-2. validate that the refactor did not change provider setup or chat behavior
-3. continue splitting the sidebar template into smaller UI modules when real features land
+1. package and ship `2.3.1`
+2. validate the reload command in the Extension Development Host
+3. keep moving visual concerns into static webview assets where it improves iteration speed
 
 ## Session Close Note
 
-This session converts the codebase from a flat prototype layout into domain-oriented modules suitable for a larger extension.
+This session adds a faster visual development loop for sidebar design work.

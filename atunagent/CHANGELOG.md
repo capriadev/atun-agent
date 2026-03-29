@@ -2,6 +2,18 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.3.1] - 2026-03-28
+
+### Added
+- Fast UI iteration workflow for the sidebar webview:
+  - static `assets/webview/chat-shell.css`
+  - static `assets/webview/chat-shell.js`
+  - `Atun Agent: Reload Sidebar Webview`
+  - `Atun Agent: Open Webview DevTools`
+
+### Changed
+- `chat-shell-html.ts` now focuses on HTML structure and links external webview assets instead of embedding large inline CSS and client script blocks.
+
 ## [2.3.0] - 2026-03-28
 
 ### Changed

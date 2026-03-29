@@ -58,7 +58,13 @@ There are two layers:
   - bridge between host messages and sidebar view-model
 
 - `atunagent/src/sidebar/webview/chat-shell-html.ts`
-  - HTML/CSS/client template for the chat shell
+  - HTML structure for the chat shell
+
+- `atunagent/assets/webview/chat-shell.css`
+  - stylesheet loaded directly by the webview for fast visual iteration
+
+- `atunagent/assets/webview/chat-shell.js`
+  - client-side webview behavior loaded as a static asset for quick UI testing
 
 - `atunagent/src/sidebar/webview/chat-shell-protocol.ts`
   - typed incoming messages from the webview to the host
@@ -138,6 +144,10 @@ The long-term direction is to increase native/editor-level integration while kee
 
 - `.vscode/tasks.json`
   - background `npm: watch` task feeds the extension debug loop used by `F5`
+
+- command palette workflow for UI iteration:
+  - `Atun Agent: Reload Sidebar Webview`
+  - `Atun Agent: Open Webview DevTools`
 
 ## Vision
 

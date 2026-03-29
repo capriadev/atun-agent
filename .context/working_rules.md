@@ -33,6 +33,7 @@
 - Keep provider logic behind `ProviderRegistry` so additional providers can be added without rewriting the sidebar flow.
 - Keep database responsibilities inside `LocalDatabase`.
 - Keep the webview responsible for rendering and user interaction only; business logic stays in the extension host.
+- When visual iteration speed matters, prefer static webview assets under `assets/webview/` over large inline CSS/JS blocks inside TypeScript templates.
 
 ## Integration Conventions
 
