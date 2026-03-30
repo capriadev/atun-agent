@@ -1,9 +1,9 @@
 :root {
   color-scheme: light dark;
   --atun-bg: var(--vscode-editor-background);
-  --atun-panel: var(--vscode-editor-background);
-  --atun-panel-muted: var(--vscode-input-background);
-  --atun-border: var(--vscode-panel-border, var(--vscode-widget-border, var(--vscode-editorGroup-border)));
+  --atun-panel: color-mix(in srgb, var(--vscode-editor-background) 92%, var(--vscode-sideBar-background));
+  --atun-panel-alt: color-mix(in srgb, var(--vscode-input-background) 34%, var(--vscode-editor-background));
+  --atun-border: color-mix(in srgb, var(--vscode-panel-border, var(--vscode-widget-border, var(--vscode-editorGroup-border))) 82%, transparent);
   --atun-border-strong: var(--vscode-contrastBorder, var(--vscode-panel-border, var(--vscode-widget-border)));
   --atun-text: var(--vscode-foreground);
   --atun-text-strong: var(--vscode-editor-foreground, var(--vscode-foreground));
@@ -13,7 +13,6 @@
   --atun-hover: var(--vscode-list-hoverBackground, var(--vscode-toolbar-hoverBackground));
   --atun-input-text: var(--vscode-input-foreground);
   --atun-placeholder: var(--vscode-input-placeholderForeground, var(--vscode-descriptionForeground));
-  --atun-link: var(--vscode-textLink-foreground);
   --atun-error: var(--vscode-errorForeground);
   --atun-warning-border: var(--vscode-inputValidation-warningBorder, var(--vscode-panel-border));
   --atun-scrollbar: var(--vscode-scrollbarSlider-background, color-mix(in srgb, var(--atun-muted) 42%, transparent));
@@ -21,7 +20,7 @@
   --atun-focus: var(--vscode-focusBorder);
   --atun-font: var(--vscode-font-family);
   --atun-radius: 8px;
-  --atun-radius-sm: 6px;
+  --atun-radius-sm: 5px;
   --atun-line-height: 20px;
 }
 
@@ -72,7 +71,7 @@ select:focus-visible {
 .surface {
   border: 1px solid var(--atun-border);
   border-radius: var(--atun-radius);
-  background: color-mix(in srgb, var(--atun-panel-muted) 18%, var(--atun-panel));
+  background: var(--atun-panel-alt);
 }
 
 .chat-screen {
@@ -102,10 +101,10 @@ select:focus-visible {
 
 .toolbar-row h1 {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.1;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--atun-text-strong);
 }
 
@@ -117,8 +116,8 @@ select:focus-visible {
 }
 
 .logo-mark svg {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   display: block;
 }
 
@@ -132,19 +131,17 @@ select:focus-visible {
 .icon-lite,
 .button,
 .micro-button,
-.chip,
 .send-button,
 .expand-button {
   min-height: 24px;
   border: 1px solid var(--atun-border);
-  background: var(--atun-panel);
+  background: transparent;
   color: var(--atun-text);
   cursor: pointer;
 }
 
 .icon-lite,
 .button,
-.chip,
 .send-button {
   padding: 4px 8px;
   border-radius: var(--atun-radius-sm);
@@ -159,7 +156,6 @@ select:focus-visible {
 
 .button:hover:not(:disabled),
 .micro-button:hover:not(:disabled),
-.chip:hover:not(:disabled),
 .icon-lite:hover:not(:disabled),
 .expand-button:hover:not(:disabled) {
   background: var(--atun-hover);
@@ -167,7 +163,6 @@ select:focus-visible {
 
 .button:disabled,
 .micro-button:disabled,
-.chip:disabled,
 .send-button:disabled,
 .icon-lite:disabled,
 .expand-button:disabled {
@@ -211,7 +206,7 @@ select:focus-visible {
   padding: 6px 8px;
   border-radius: var(--atun-radius-sm);
   border: 1px solid var(--atun-border);
-  background: var(--atun-panel-muted);
+  background: var(--atun-panel);
   color: var(--atun-input-text);
 }
 
@@ -219,7 +214,7 @@ select:focus-visible {
   padding: 6px 8px;
   border-radius: var(--atun-radius-sm);
   border: 1px solid var(--atun-warning-border);
-  background: var(--atun-panel-muted);
+  background: var(--atun-panel-alt);
   color: var(--atun-text);
 }
 
@@ -252,7 +247,9 @@ select:focus-visible {
   overflow: hidden;
   border: 1px solid var(--atun-border);
   border-radius: var(--atun-radius);
-  background: var(--atun-panel);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--atun-panel-alt) 78%, transparent), transparent 44%),
+    var(--atun-panel);
 }
 
 .history-empty {
@@ -261,10 +258,10 @@ select:focus-visible {
   display: grid;
   place-items: center;
   align-content: center;
-  gap: 6px;
+  gap: 8px;
   padding: 18px;
   text-align: center;
-  background: var(--atun-panel);
+  background: transparent;
 }
 
 .history-empty[hidden] {
@@ -272,8 +269,14 @@ select:focus-visible {
 }
 
 .empty-wordmark {
-  font-size: 13px;
-  letter-spacing: 0.18em;
+  display: grid;
+  gap: 2px;
+}
+
+.empty-title {
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--atun-text-strong);
 }
@@ -303,15 +306,16 @@ select:focus-visible {
 .message {
   max-width: 96%;
   padding: 8px 10px;
-  border-radius: var(--atun-radius);
+  border-radius: 7px;
   border: 1px solid var(--atun-border);
-  background: color-mix(in srgb, var(--atun-panel-muted) 12%, var(--atun-panel));
+  background: color-mix(in srgb, var(--atun-panel-alt) 24%, var(--atun-panel));
   white-space: pre-wrap;
   word-break: break-word;
 }
 
 .message.user {
   margin-left: auto;
+  background: color-mix(in srgb, var(--atun-accent) 11%, var(--atun-panel));
 }
 
 .message.assistant {
@@ -324,8 +328,8 @@ select:focus-visible {
 
 .composer-shell {
   display: grid;
-  gap: 4px;
-  padding: 5px;
+  gap: 3px;
+  padding: 4px;
   border: 1px solid var(--atun-border);
   border-radius: var(--atun-radius);
   background: var(--atun-panel);
@@ -355,18 +359,18 @@ select:focus-visible {
 .composer-frame {
   position: relative;
   min-height: 0;
-  border: 1px solid var(--atun-border);
-  border-radius: var(--atun-radius-sm);
-  background: var(--atun-panel);
-  padding: 6px 8px;
+  border-top: 1px solid var(--atun-border);
+  border-bottom: 1px solid var(--atun-border);
+  background: transparent;
+  padding: 6px 8px 4px;
 }
 
 .expand-button {
   position: absolute;
   top: 4px;
-  right: 4px;
-  width: 22px;
-  min-height: 22px;
+  right: 2px;
+  width: 20px;
+  min-height: 20px;
   padding: 0;
   border-radius: 999px;
   background: transparent;
@@ -377,7 +381,7 @@ select:focus-visible {
   width: 100%;
   min-height: calc(var(--atun-line-height) * 4);
   max-height: calc(var(--atun-line-height) * 10);
-  padding: 16px 18px 0 0;
+  padding: 14px 20px 0 0;
   border: 0;
   resize: vertical;
   background: transparent;
@@ -405,6 +409,14 @@ select:focus-visible {
   background: transparent;
 }
 
+.micro-button img,
+.control-icon {
+  width: 12px;
+  height: 12px;
+  display: block;
+  opacity: 0.88;
+}
+
 .stat,
 .context-meter {
   color: var(--atun-muted);
@@ -412,26 +424,21 @@ select:focus-visible {
 }
 
 .send-button {
-  min-width: 28px;
-  padding: 4px 8px;
+  min-width: 26px;
+  padding: 4px 7px;
+  border-radius: 999px;
 }
 
 .control-select {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  min-height: 24px;
-  padding: 2px 6px;
+  gap: 5px;
+  min-height: 23px;
+  padding: 1px 6px;
   border: 1px solid var(--atun-border);
   border-radius: 4px;
-  background: var(--atun-panel);
-}
-
-.control-select span {
-  color: var(--atun-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 9px;
+  background: transparent;
+  min-width: 0;
 }
 
 .mini-select {
@@ -440,15 +447,20 @@ select:focus-visible {
   background: transparent;
   color: var(--atun-text);
   padding: 0;
+  font-size: 11px;
+}
+
+.mini-select:disabled {
+  opacity: 0.92;
 }
 
 .model-select-wrap {
-  min-width: 140px;
+  min-width: 150px;
 }
 
-.chip.subtle {
-  background: transparent;
-  color: var(--atun-muted);
+.context-meter {
+  padding: 2px 0 2px 8px;
+  font-size: 11px;
 }
 
 .scrollable::-webkit-scrollbar,

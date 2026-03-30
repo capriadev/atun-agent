@@ -43,7 +43,6 @@ const contextMeter = document.getElementById('contextMeter');
 const chatError = document.getElementById('chatError');
 const modelSelect = document.getElementById('modelSelect');
 const sendMessage = document.getElementById('sendMessage');
-const openNativeChat = document.getElementById('openNativeChat');
 const accessModeSelect = document.getElementById('accessModeSelect');
 const agentModeSelect = document.getElementById('agentModeSelect');
 const reasoningSelect = document.getElementById('reasoningSelect');
@@ -226,8 +225,6 @@ function renderChat() {
     && Boolean(state.selectedModelId)
     && Boolean(composer.value.trim());
   sendMessage.disabled = !canSend;
-  openNativeChat.hidden = !(state.nativeChatAvailable && state.connections.length > 0);
-  openNativeChat.disabled = state.isStreaming;
   composer.disabled = state.isStreaming || !state.modelSelectorOptions.length;
   toggleComposerSize.disabled = state.isStreaming;
   accessModeSelect.disabled = true;
@@ -289,14 +286,6 @@ function toggleComposerHeightPreset() {
 
 closeSetup.addEventListener('click', () => {
   vscode.postMessage({ type: 'back' });
-});
-
-document.getElementById('newChat').addEventListener('click', () => {
-  vscode.postMessage({ type: 'newChat' });
-});
-
-openNativeChat.addEventListener('click', () => {
-  vscode.postMessage({ type: 'openNativeChat' });
 });
 
 toggleComposerSize.addEventListener('click', () => {

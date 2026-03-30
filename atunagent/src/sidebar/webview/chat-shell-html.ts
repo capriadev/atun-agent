@@ -4,6 +4,13 @@ export function createChatShellHtml(webview: vscode.Webview, extensionUri: vscod
 	const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'assets', 'webview', 'chat-shell.css'));
 	const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'assets', 'webview', 'chat-shell.js'));
 	const logoMarkup = getLogoMarkup();
+	const fullAccessIconUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'assets', 'icons', 'full-access.svg'));
+	const agentIconUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'assets', 'icons', 'agent-agent.svg'));
+	const modelIconUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'assets', 'icons', 'model.svg'));
+	const reasoningIconUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'assets', 'icons', 'thinking.svg'));
+	const hashIconUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'assets', 'icons', 'hash.svg'));
+	const slashIconUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'assets', 'icons', 'slash.svg'));
+	const atIconUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'assets', 'icons', 'at.svg'));
 
 	return `<!DOCTYPE html>
 <html lang="en">
@@ -41,11 +48,14 @@ export function createChatShellHtml(webview: vscode.Webview, extensionUri: vscod
           <button id="refreshModels" class="button">Actualizar modelos</button>
           <button id="saveConnection" class="button primary">Aceptar</button>
         </div>
-      </div>
-      <div id="chatError" class="notice" hidden></div>
+        </div>
+        <div id="chatError" class="notice" hidden></div>
       <div class="history-shell">
         <div id="emptyState" class="history-empty">
-          <div class="empty-wordmark">ATUN AGENT</div>
+          <div class="empty-wordmark">
+            <span class="empty-title">ATUN</span>
+            <span class="empty-title">AGENT</span>
+          </div>
           <p class="empty-copy">Escribe el primer mensaje para empezar el chat local con el modelo seleccionado.</p>
         </div>
         <div id="messages" class="messages"></div>
@@ -53,9 +63,9 @@ export function createChatShellHtml(webview: vscode.Webview, extensionUri: vscod
       <div id="composerShell" class="composer-shell">
         <div class="composer-toolbar">
           <div class="prompt-actions">
-            <button class="micro-button" data-insert="#" title="Adjuntar o mencionar contexto">#</button>
-            <button class="micro-button" data-insert="/" title="Invocar skills">/</button>
-            <button class="micro-button" data-insert="@" title="Invocar MCP">@</button>
+            <button class="micro-button" data-insert="#" title="Adjuntar o mencionar contexto"><img src="${hashIconUri}" alt="" /></button>
+            <button class="micro-button" data-insert="/" title="Invocar skills"><img src="${slashIconUri}" alt="" /></button>
+            <button class="micro-button" data-insert="@" title="Invocar MCP"><img src="${atIconUri}" alt="" /></button>
           </div>
           <div class="composer-stats">
             <span id="tokenCount" class="stat">0 tok</span>
@@ -69,14 +79,14 @@ export function createChatShellHtml(webview: vscode.Webview, extensionUri: vscod
         <div class="footer-controls">
           <div class="footer-left">
             <label class="control-select">
-              <span>Access</span>
+              <img class="control-icon" src="${fullAccessIconUri}" alt="" />
               <select id="accessModeSelect" class="mini-select">
                 <option>Full Access</option>
                 <option>Approval Required</option>
               </select>
             </label>
             <label class="control-select">
-              <span>Agent</span>
+              <img class="control-icon" src="${agentIconUri}" alt="" />
               <select id="agentModeSelect" class="mini-select">
                 <option>Agent</option>
                 <option>Ask</option>
@@ -86,11 +96,11 @@ export function createChatShellHtml(webview: vscode.Webview, extensionUri: vscod
               </select>
             </label>
             <label class="control-select model-select-wrap">
-              <span>Model</span>
+              <img class="control-icon" src="${modelIconUri}" alt="" />
               <select id="modelSelect" class="mini-select"></select>
             </label>
             <label class="control-select">
-              <span>Reason</span>
+              <img class="control-icon" src="${reasoningIconUri}" alt="" />
               <select id="reasoningSelect" class="mini-select">
                 <option>Off</option>
                 <option>Low</option>
@@ -100,8 +110,6 @@ export function createChatShellHtml(webview: vscode.Webview, extensionUri: vscod
             </label>
           </div>
           <div class="footer-right">
-            <button id="newChat" class="chip subtle">Nuevo</button>
-            <button id="openNativeChat" class="chip subtle">Native</button>
             <div id="contextMeter" class="context-meter">0% contexto</div>
           </div>
         </div>
