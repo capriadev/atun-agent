@@ -2,45 +2,43 @@
 
 ## Active Task
 
-Close the `2.3.2` patch release after redesigning the sidebar chat UI into a more compact minimal shell.
+Close the `2.3.3` patch release after redesigning the sidebar chat shell with a more minimal icon-led UI.
 
 ## What Was Being Worked On Before This
 
-The previous completed product work was release `2.3.1`:
+The previous completed product work was release `2.3.2`:
 
-- the webview CSS and JS were moved into static assets
-- a fast reload workflow for the sidebar was added
-- visual iteration no longer required packaging every tweak
+- the composer layout was compacted
+- the shell was reduced to a denser editor-like arrangement
+- auto-grow and manual input resizing were added
 
 ## Last Thing Modified
 
 The latest completed code changes are:
 
-- compacted the composer layout to match the new minimal chat shell direction
-- moved controls into three clearer zones:
-  - action row
-  - input area
-  - bottom selector row
-- added auto-grow up to ten lines plus manual resize and double-click min/max on the input expander
+- removed the `Nuevo` and `Native` buttons from the chat shell footer
+- replaced textual selector labels with icon-led controls
+- pushed the visual style further toward a minimal editor-integrated look
 
 ## Decision Made And Why
 
 Decision:
-- prioritize layout clarity and density over the previous larger card-based composer
-- keep this as a visual patch release because the backend contracts and chat flow did not change
+- keep the shell focused on the core chat interaction and remove low-priority footer buttons
+- prefer icon-led control groups over repeated text labels
+- ship this as a visual patch release because the runtime behavior did not change
 
 Why:
-- the chat UI needs to feel closer to integrated agent extensions inside the editor
-- the new layout makes future selectors and modes easier to add without growing vertically
+- the shell should read as a compact control strip rather than a settings form
+- icons reduce noise and free horizontal space for future controls
 
 ## Logical Next Step
 
 Current execution order:
 
-1. package and ship `2.3.2`
-2. validate spacing, auto-grow and resize behavior in the Extension Development Host
-3. decide which of the selector controls should become real state instead of visual placeholders
+1. package and ship `2.3.3`
+2. validate icon readability and spacing across light/dark themes
+3. decide which icon controls become real state and which remain placeholder UI
 
 ## Session Close Note
 
-This session reshapes the chat shell toward a denser, editor-native layout.
+This session reshapes the chat shell into a cleaner icon-led control surface.

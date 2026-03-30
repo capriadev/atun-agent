@@ -2,6 +2,13 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.3.3] - 2026-03-29
+
+### Changed
+- Redesigned the chat shell into a more minimal, icon-led control surface.
+- Removed the `Nuevo` and `Native` footer buttons from the main chat UI.
+- Replaced text labels for access mode, agent mode, model and reasoning with existing SVG icons from the extension assets.
+
 ## [2.3.2] - 2026-03-29
 
 ### Changed

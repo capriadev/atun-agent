@@ -119,6 +119,7 @@ Current chat shell behavior:
   - actions row
   - auto-growing input with manual resize
   - bottom selector row with context usage on the right
+- the selector row now uses icon-led controls instead of text labels for access mode, agent mode, model and reasoning
 
 The long-term direction is to increase native/editor-level integration while keeping the provider, persistence and chat runtime independent from any single VS Code API surface.
 
@@ -139,7 +140,7 @@ The long-term direction is to increase native/editor-level integration while kee
 
 - root workspace wrapper drives build/package commands
 - extension output is packaged as versioned VSIX files under `packages/`
-- current shipped line: `2.3.2`
+- current shipped line: `2.3.3`
 
 ## Local Debug Workflow
 
