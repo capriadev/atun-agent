@@ -2,6 +2,16 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.3.2] - 2026-03-29
+
+### Changed
+- Redesigned the sidebar chat shell into a denser, more minimal layout.
+- Reorganized the composer into:
+  - top action row
+  - middle auto-growing input area
+  - bottom selector row with context usage on the right
+- The input now starts at four lines, auto-grows up to ten lines, supports manual resize, and the expand control toggles compact/expanded behavior with a double-click min/max shortcut.
+
 ## [2.3.1] - 2026-03-28
 
 ### Added

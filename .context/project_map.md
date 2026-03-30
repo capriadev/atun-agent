@@ -115,6 +115,10 @@ Current chat shell behavior:
 - first-time setup and provider management open inside the same chat surface instead of switching to standalone pages
 - active chat uses one grouped model selector instead of separate provider/model dropdowns
 - provider management entry now also exists through the native settings title action
+- the composer now uses a compact stacked layout:
+  - actions row
+  - auto-growing input with manual resize
+  - bottom selector row with context usage on the right
 
 The long-term direction is to increase native/editor-level integration while keeping the provider, persistence and chat runtime independent from any single VS Code API surface.
 
@@ -135,7 +139,7 @@ The long-term direction is to increase native/editor-level integration while kee
 
 - root workspace wrapper drives build/package commands
 - extension output is packaged as versioned VSIX files under `packages/`
-- current shipped line: `2.3.0`
+- current shipped line: `2.3.2`
 
 ## Local Debug Workflow
 
