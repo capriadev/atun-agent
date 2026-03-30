@@ -109,17 +109,17 @@ Current integration points:
 - native command registrations
 - native chat participant kept as a secondary bridge
 
-Current chat shell behavior:
+Current chat shell behavior (v2.4.0):
 
 - one persistent chat surface is always rendered
-- first-time setup and provider management open inside the same chat surface instead of switching to standalone pages
-- active chat uses one grouped model selector instead of separate provider/model dropdowns
-- provider management entry now also exists through the native settings title action
-- the composer now uses a compact stacked layout:
-  - actions row
-  - auto-growing input with manual resize
-  - bottom selector row with context usage on the right
-- the selector row now uses icon-led controls instead of text labels for access mode, agent mode, model and reasoning
+- first-time setup and provider management open inside the same chat surface
+- active chat uses a native-styled `<select>` for the model selector (with `optgroup` per connection)
+- access mode, agent mode and reasoning level use custom HTML selects with inline SVG icons and own dropdown, always visible
+- the composer has no outer border — it blends into the editor surface
+- a `:::` resize handle above the textarea supports drag-to-resize, double-click to expand/collapse, and single-click to contract when expanded
+- the context usage meter opens a persistent popup (click-toggle) showing tokens/256k, a progress bar and a compact action button
+- all color tokens derive from `--vscode-*` variables mapped to `--atun-*` scoped vars
+- SVGs for custom-select icons are injected inline into the HTML string to pass the webview CSP
 
 The long-term direction is to increase native/editor-level integration while keeping the provider, persistence and chat runtime independent from any single VS Code API surface.
 
@@ -140,7 +140,7 @@ The long-term direction is to increase native/editor-level integration while kee
 
 - root workspace wrapper drives build/package commands
 - extension output is packaged as versioned VSIX files under `packages/`
-- current shipped line: `2.3.3`
+- current shipped line: `2.4.0`
 
 ## Local Debug Workflow
 
