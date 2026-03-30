@@ -1,551 +1,475 @@
-    :root {
-      color-scheme: light dark;
-      --atun-bg: var(--vscode-sideBar-background);
-      --atun-bg-elevated: var(--vscode-editorWidget-background, var(--vscode-editor-background));
-      --atun-panel: var(--vscode-editor-background);
-      --atun-panel-muted: var(--vscode-input-background);
-      --atun-border: var(--vscode-widget-border, var(--vscode-panel-border, var(--vscode-editorGroup-border)));
-      --atun-border-strong: var(--vscode-contrastBorder, var(--vscode-widget-border, var(--vscode-panel-border)));
-      --atun-text: var(--vscode-foreground);
-      --atun-text-strong: var(--vscode-editor-foreground, var(--vscode-foreground));
-      --atun-muted: var(--vscode-descriptionForeground);
-      --atun-accent: var(--vscode-button-background);
-      --atun-accent-text: var(--vscode-button-foreground);
-      --atun-secondary: var(--vscode-button-secondaryBackground, var(--vscode-input-background));
-      --atun-secondary-text: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
-      --atun-hover: var(--vscode-list-hoverBackground, var(--vscode-toolbar-hoverBackground));
-      --atun-input-text: var(--vscode-input-foreground);
-      --atun-placeholder: var(--vscode-input-placeholderForeground, var(--vscode-descriptionForeground));
-      --atun-link: var(--vscode-textLink-foreground);
-      --atun-error: var(--vscode-errorForeground);
-      --atun-warning-border: var(--vscode-inputValidation-warningBorder, var(--vscode-panel-border));
-      --atun-scrollbar: var(--vscode-scrollbarSlider-background, color-mix(in srgb, var(--atun-muted) 42%, transparent));
-      --atun-scrollbar-hover: var(--vscode-scrollbarSlider-hoverBackground, color-mix(in srgb, var(--atun-muted) 58%, transparent));
-      --atun-focus: var(--vscode-focusBorder);
-      --atun-font: var(--vscode-font-family);
-      --atun-radius: 14px;
-      --atun-radius-sm: 10px;
-      --atun-shadow-color: var(--vscode-widget-shadow, color-mix(in srgb, var(--atun-text-strong) 16%, transparent));
-      --atun-stripe: color-mix(in srgb, var(--atun-muted) 42%, transparent);
-    }
-    * {
-      box-sizing: border-box;
-    }
-    html, body {
-      height: 100%;
-    }
-    body {
-      margin: 0;
-      height: 100vh;
-      background:
-        radial-gradient(circle at top, color-mix(in srgb, var(--atun-accent) 10%, transparent), transparent 46%),
-        var(--atun-bg);
-      color: var(--atun-text);
-      font: 12px/1.45 var(--atun-font);
-      overflow: hidden;
-    }
-    button, input, textarea, select {
-      font: inherit;
-      color: inherit;
-    }
-    button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
-      outline: 1px solid var(--atun-focus);
-      outline-offset: 1px;
-    }
-    .screen {
-      display: none;
-      height: 100vh;
-      min-height: 100vh;
-      overflow: hidden;
-    }
-    .screen.active {
-      display: block;
-    }
-    .screen.onboarding.active {
-      display: grid;
-    }
-    .screen.picker.active,
-    .screen.config.active {
-      display: grid;
-      align-content: start;
-    }
-    .surface {
-      border: 1px solid var(--atun-border);
-      border-radius: var(--atun-radius);
-      background: color-mix(in srgb, var(--atun-bg-elevated) 92%, var(--atun-bg));
-      box-shadow: 0 10px 28px var(--atun-shadow-color);
-    }
-    .onboarding {
-      display: grid;
-      place-items: center;
-      padding: 18px;
-    }
-    .onboarding-card {
-      width: 100%;
-      max-width: 360px;
-      padding: 24px 18px;
-      text-align: center;
-      display: grid;
-      gap: 16px;
-    }
-    .logo-mark {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--atun-text-strong);
-    }
-    .logo-mark svg {
-      width: 78px;
-      height: 78px;
-      display: block;
-    }
-    .stack {
-      display: grid;
-      gap: 6px;
-    }
-    .title {
-      margin: 0;
-      font-size: 26px;
-      line-height: 1;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 700;
-      color: var(--atun-text-strong);
-    }
-    .subtitle {
-      margin: 0;
-      color: var(--atun-muted);
-    }
-    .button {
-      width: 100%;
-      min-height: 40px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: 1px solid var(--atun-border);
-      background: var(--atun-secondary);
-      color: var(--atun-secondary-text);
-      cursor: pointer;
-    }
-    .button:hover:not(:disabled) {
-      background: var(--atun-hover);
-    }
-    .button.primary {
-      border-color: transparent;
-      background: var(--atun-accent);
-      color: var(--atun-accent-text);
-    }
-    .button.link {
-      border-style: dashed;
-      background: transparent;
-      color: var(--atun-link);
-    }
-    .button:disabled {
-      opacity: 0.55;
-      cursor: default;
-    }
-    .button-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-    .picker, .config, .chat-screen {
-      height: 100vh;
-      padding: 10px;
-    }
-    .picker, .config {
-      display: grid;
-      gap: 12px;
-      grid-template-rows: auto minmax(0, 1fr);
-    }
-    .toolbar-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .toolbar-row h1 {
-      margin: 0;
-      font-size: 18px;
-      line-height: 1.1;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--atun-text-strong);
-    }
-    .icon-lite {
-      width: auto;
-      min-height: 32px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--atun-border);
-      background: transparent;
-      cursor: pointer;
-      color: var(--atun-muted);
-    }
-    .provider-card {
-      width: 100%;
-      padding: 14px;
-      text-align: left;
-      display: grid;
-      gap: 6px;
-      cursor: pointer;
-      border-radius: var(--atun-radius);
-      border: 1px solid var(--atun-border);
-      background: var(--atun-bg-elevated);
-    }
-    .provider-card:hover {
-      background: var(--atun-hover);
-    }
-    .provider-card strong {
-      font-size: 13px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--atun-text-strong);
-    }
-    .config-panel {
-      padding: 14px;
-      display: grid;
-      gap: 12px;
-      min-height: 0;
-      overflow: hidden;
-    }
-    .setup-panel[hidden] {
-      display: none;
-    }
-    .field {
-      display: grid;
-      gap: 6px;
-    }
-    .field label {
-      color: var(--atun-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 11px;
-    }
-    .input {
-      width: 100%;
-      min-height: 40px;
-      padding: 10px 12px;
-      border-radius: var(--atun-radius-sm);
-      border: 1px solid var(--atun-border);
-      background: var(--atun-panel-muted);
-      color: var(--atun-input-text);
-    }
-    .hint {
-      color: var(--atun-muted);
-      font-size: 11px;
-    }
-    .notice {
-      padding: 10px 12px;
-      border-radius: var(--atun-radius-sm);
-      border: 1px solid var(--atun-warning-border);
-      background: var(--atun-panel-muted);
-      color: var(--atun-text);
-    }
-    .models {
-      display: grid;
-      gap: 8px;
-      max-height: 240px;
-      overflow: auto;
-      padding-right: 2px;
-    }
-    .model-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: var(--atun-radius-sm);
-      border: 1px solid var(--atun-border);
-      background: var(--atun-panel);
-    }
-    .model-row input {
-      margin: 0;
-      width: auto;
-    }
-    .chat-shell {
-      height: calc(100vh - 20px);
-      min-height: 0;
-      display: grid;
-      grid-template-rows: minmax(0, 1fr) auto;
-      gap: 10px;
-    }
-    .history-shell {
-      position: relative;
-      overflow: hidden;
-      border-radius: 18px;
-      border: 1px solid var(--atun-border-strong);
-      background: var(--atun-panel);
-      min-height: 0;
-    }
-    .history-empty {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      align-content: center;
-      gap: 10px;
-      padding: 24px;
-      text-align: center;
-      background:
-        repeating-linear-gradient(
-          135deg,
-          transparent 0,
-          transparent 32px,
-          var(--atun-stripe) 32px,
-          var(--atun-stripe) 38px
-        ),
-        var(--atun-panel);
-    }
-    .history-empty[hidden] {
-      display: none;
-    }
-    .empty-wordmark {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: clamp(34px, 7vw, 58px);
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      line-height: 0.95;
-      color: var(--atun-text-strong);
-    }
-    .empty-arrow {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 42px;
-      height: 42px;
-      border: 2px solid currentColor;
-      border-radius: 999px;
-      font-size: 24px;
-    }
-    .empty-copy {
-      max-width: 240px;
-      margin: 0;
-      color: var(--atun-muted);
-    }
-    .messages {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      gap: 12px;
-      align-content: start;
-      min-height: 0;
-      height: 100%;
-      overflow: auto;
-      padding: 14px;
-    }
-    .messages[hidden] {
-      display: none;
-    }
-    .message {
-      max-width: 94%;
-      padding: 12px 14px;
-      border-radius: 16px;
-      border: 1px solid var(--atun-border);
-      background: var(--atun-bg-elevated);
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .message.user {
-      margin-left: auto;
-      background: var(--atun-secondary);
-    }
-    .message.assistant {
-      margin-right: auto;
-      background: var(--atun-panel);
-    }
-    .message.error {
-      border-color: var(--atun-error);
-    }
-    .composer-shell {
-      display: grid;
-      gap: 10px;
-      padding: 12px;
-      border-radius: 18px;
-      border: 1px solid var(--atun-border-strong);
-      background: var(--atun-bg-elevated);
-    }
-    .composer-header {
-      display: flex;
-      justify-content: flex-end;
-      min-height: 10px;
-    }
-    .expand-button {
-      min-width: 26px;
-      min-height: 26px;
-      padding: 0;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--atun-muted);
-      cursor: pointer;
-    }
-    .expand-button:hover {
-      background: var(--atun-hover);
-    }
-    .composer-frame {
-      border-radius: 12px;
-      background: transparent;
-    }
-    .composer-input {
-      width: 100%;
-      min-height: 82px;
-      max-height: 180px;
-      padding: 0;
-      border: 0;
-      resize: none;
-      background: transparent;
-      color: var(--atun-input-text);
-      line-height: 1.5;
-      overflow-y: auto;
-    }
-    .composer-shell.expanded .composer-input {
-      min-height: 144px;
-      max-height: 260px;
-    }
-    .composer-input::placeholder {
-      color: var(--atun-placeholder);
-    }
-    .composer-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .prompt-actions,
-    .composer-stats,
-    .footer-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .micro-button,
-    .chip {
-      min-height: 30px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--atun-border);
-      background: var(--atun-panel);
-      color: var(--atun-text);
-      cursor: pointer;
-    }
-    .micro-button:hover,
-    .chip:hover {
-      background: var(--atun-hover);
-    }
-    .micro-button {
-      width: 32px;
-      padding: 0;
-      justify-content: center;
-      display: inline-flex;
-      align-items: center;
-      font-weight: 700;
-    }
-    .micro-button:disabled,
-    .chip:disabled {
-      cursor: default;
-      opacity: 0.7;
-    }
-    .send-button {
-      min-height: 32px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      background: var(--atun-accent);
-      color: var(--atun-accent-text);
-      cursor: pointer;
-    }
-    .send-button:hover:not(:disabled) {
-      opacity: 0.92;
-    }
-    .send-button:disabled {
-      opacity: 0.55;
-      cursor: default;
-    }
-    .stat {
-      color: var(--atun-muted);
-      white-space: nowrap;
-    }
-    .footer-controls {
-      padding-top: 2px;
-      border-top: 1px solid var(--atun-border);
-      justify-content: space-between;
-    }
-    .footer-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      min-width: 0;
-      flex: 1;
-    }
-    .footer-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .chip.static {
-      cursor: default;
-      color: var(--atun-muted);
-    }
-    .model-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 0;
-      max-width: 100%;
-    }
-    .model-chip span {
-      color: var(--atun-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 10px;
-    }
-    .model-select {
-      min-width: 128px;
-      max-width: 100%;
-      border: 0;
-      background: transparent;
-      color: var(--atun-text);
-      padding: 0;
-    }
-    .model-select:disabled {
-      opacity: 0.7;
-    }
-    .native-link {
-      background: transparent;
-      border-style: dashed;
-      color: var(--atun-link);
-    }
-    .context-meter {
-      min-height: 30px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--atun-border);
-      background: var(--atun-panel);
-      color: var(--atun-muted);
-      white-space: nowrap;
-    }
-    .scrollable::-webkit-scrollbar,
-    .models::-webkit-scrollbar,
-    .messages::-webkit-scrollbar,
-    .composer-input::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    .scrollable::-webkit-scrollbar-thumb,
-    .models::-webkit-scrollbar-thumb,
-    .messages::-webkit-scrollbar-thumb,
-    .composer-input::-webkit-scrollbar-thumb {
-      background: var(--atun-scrollbar);
-      border-radius: 999px;
-    }
-    .scrollable::-webkit-scrollbar-thumb:hover,
-    .models::-webkit-scrollbar-thumb:hover,
-    .messages::-webkit-scrollbar-thumb:hover,
-    .composer-input::-webkit-scrollbar-thumb:hover {
-      background: var(--atun-scrollbar-hover);
-    }
-  
+:root {
+  color-scheme: light dark;
+  --atun-bg: var(--vscode-editor-background);
+  --atun-panel: var(--vscode-editor-background);
+  --atun-panel-muted: var(--vscode-input-background);
+  --atun-border: var(--vscode-panel-border, var(--vscode-widget-border, var(--vscode-editorGroup-border)));
+  --atun-border-strong: var(--vscode-contrastBorder, var(--vscode-panel-border, var(--vscode-widget-border)));
+  --atun-text: var(--vscode-foreground);
+  --atun-text-strong: var(--vscode-editor-foreground, var(--vscode-foreground));
+  --atun-muted: var(--vscode-descriptionForeground);
+  --atun-accent: var(--vscode-button-background);
+  --atun-accent-text: var(--vscode-button-foreground);
+  --atun-hover: var(--vscode-list-hoverBackground, var(--vscode-toolbar-hoverBackground));
+  --atun-input-text: var(--vscode-input-foreground);
+  --atun-placeholder: var(--vscode-input-placeholderForeground, var(--vscode-descriptionForeground));
+  --atun-link: var(--vscode-textLink-foreground);
+  --atun-error: var(--vscode-errorForeground);
+  --atun-warning-border: var(--vscode-inputValidation-warningBorder, var(--vscode-panel-border));
+  --atun-scrollbar: var(--vscode-scrollbarSlider-background, color-mix(in srgb, var(--atun-muted) 42%, transparent));
+  --atun-scrollbar-hover: var(--vscode-scrollbarSlider-hoverBackground, color-mix(in srgb, var(--atun-muted) 58%, transparent));
+  --atun-focus: var(--vscode-focusBorder);
+  --atun-font: var(--vscode-font-family);
+  --atun-radius: 8px;
+  --atun-radius-sm: 6px;
+  --atun-line-height: 20px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: var(--atun-bg);
+  color: var(--atun-text);
+  font: 12px/1.4 var(--atun-font);
+  overflow: hidden;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 1px solid var(--atun-focus);
+  outline-offset: 1px;
+}
+
+.screen {
+  display: none;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.screen.active {
+  display: block;
+}
+
+.surface {
+  border: 1px solid var(--atun-border);
+  border-radius: var(--atun-radius);
+  background: color-mix(in srgb, var(--atun-panel-muted) 18%, var(--atun-panel));
+}
+
+.chat-screen {
+  height: 100vh;
+  padding: 5px;
+}
+
+.chat-shell {
+  height: calc(100vh - 10px);
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 5px;
+}
+
+.stack {
+  display: grid;
+  gap: 4px;
+}
+
+.toolbar-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.toolbar-row h1 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--atun-text-strong);
+}
+
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--atun-text-strong);
+}
+
+.logo-mark svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+.subtitle,
+.hint {
+  margin: 0;
+  color: var(--atun-muted);
+  font-size: 11px;
+}
+
+.icon-lite,
+.button,
+.micro-button,
+.chip,
+.send-button,
+.expand-button {
+  min-height: 24px;
+  border: 1px solid var(--atun-border);
+  background: var(--atun-panel);
+  color: var(--atun-text);
+  cursor: pointer;
+}
+
+.icon-lite,
+.button,
+.chip,
+.send-button {
+  padding: 4px 8px;
+  border-radius: var(--atun-radius-sm);
+}
+
+.button.primary,
+.send-button {
+  border-color: transparent;
+  background: var(--atun-accent);
+  color: var(--atun-accent-text);
+}
+
+.button:hover:not(:disabled),
+.micro-button:hover:not(:disabled),
+.chip:hover:not(:disabled),
+.icon-lite:hover:not(:disabled),
+.expand-button:hover:not(:disabled) {
+  background: var(--atun-hover);
+}
+
+.button:disabled,
+.micro-button:disabled,
+.chip:disabled,
+.send-button:disabled,
+.icon-lite:disabled,
+.expand-button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.config-panel {
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.setup-panel[hidden] {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: 4px;
+}
+
+.field label {
+  color: var(--atun-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+}
+
+.input {
+  width: 100%;
+  min-height: 28px;
+  padding: 6px 8px;
+  border-radius: var(--atun-radius-sm);
+  border: 1px solid var(--atun-border);
+  background: var(--atun-panel-muted);
+  color: var(--atun-input-text);
+}
+
+.notice {
+  padding: 6px 8px;
+  border-radius: var(--atun-radius-sm);
+  border: 1px solid var(--atun-warning-border);
+  background: var(--atun-panel-muted);
+  color: var(--atun-text);
+}
+
+.models {
+  display: grid;
+  gap: 6px;
+  max-height: 220px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.model-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--atun-radius-sm);
+  border: 1px solid var(--atun-border);
+  background: var(--atun-panel);
+}
+
+.model-row input {
+  margin: 0;
+  width: auto;
+}
+
+.history-shell {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--atun-border);
+  border-radius: var(--atun-radius);
+  background: var(--atun-panel);
+}
+
+.history-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 6px;
+  padding: 18px;
+  text-align: center;
+  background: var(--atun-panel);
+}
+
+.history-empty[hidden] {
+  display: none;
+}
+
+.empty-wordmark {
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--atun-text-strong);
+}
+
+.empty-copy {
+  max-width: 220px;
+  margin: 0;
+  color: var(--atun-muted);
+}
+
+.messages {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-height: 0;
+  height: 100%;
+  overflow: auto;
+  padding: 8px;
+}
+
+.messages[hidden] {
+  display: none;
+}
+
+.message {
+  max-width: 96%;
+  padding: 8px 10px;
+  border-radius: var(--atun-radius);
+  border: 1px solid var(--atun-border);
+  background: color-mix(in srgb, var(--atun-panel-muted) 12%, var(--atun-panel));
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.message.user {
+  margin-left: auto;
+}
+
+.message.assistant {
+  margin-right: auto;
+}
+
+.message.error {
+  border-color: var(--atun-error);
+}
+
+.composer-shell {
+  display: grid;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--atun-border);
+  border-radius: var(--atun-radius);
+  background: var(--atun-panel);
+}
+
+.composer-toolbar,
+.footer-controls,
+.footer-left,
+.footer-right,
+.prompt-actions,
+.composer-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.composer-toolbar,
+.footer-controls {
+  justify-content: space-between;
+}
+
+.footer-left,
+.footer-right {
+  flex-wrap: wrap;
+}
+
+.composer-frame {
+  position: relative;
+  min-height: 0;
+  border: 1px solid var(--atun-border);
+  border-radius: var(--atun-radius-sm);
+  background: var(--atun-panel);
+  padding: 6px 8px;
+}
+
+.expand-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  min-height: 22px;
+  padding: 0;
+  border-radius: 999px;
+  background: transparent;
+  z-index: 2;
+}
+
+.composer-input {
+  width: 100%;
+  min-height: calc(var(--atun-line-height) * 4);
+  max-height: calc(var(--atun-line-height) * 10);
+  padding: 16px 18px 0 0;
+  border: 0;
+  resize: vertical;
+  background: transparent;
+  color: var(--atun-input-text);
+  line-height: var(--atun-line-height);
+  overflow-y: auto;
+}
+
+.composer-shell.expanded .composer-input {
+  max-height: 100%;
+}
+
+.composer-input::placeholder {
+  color: var(--atun-placeholder);
+}
+
+.micro-button {
+  width: 22px;
+  min-height: 22px;
+  padding: 0;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.stat,
+.context-meter {
+  color: var(--atun-muted);
+  white-space: nowrap;
+}
+
+.send-button {
+  min-width: 28px;
+  padding: 4px 8px;
+}
+
+.control-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 24px;
+  padding: 2px 6px;
+  border: 1px solid var(--atun-border);
+  border-radius: 4px;
+  background: var(--atun-panel);
+}
+
+.control-select span {
+  color: var(--atun-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 9px;
+}
+
+.mini-select {
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--atun-text);
+  padding: 0;
+}
+
+.model-select-wrap {
+  min-width: 140px;
+}
+
+.chip.subtle {
+  background: transparent;
+  color: var(--atun-muted);
+}
+
+.scrollable::-webkit-scrollbar,
+.models::-webkit-scrollbar,
+.messages::-webkit-scrollbar,
+.composer-input::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollable::-webkit-scrollbar-thumb,
+.models::-webkit-scrollbar-thumb,
+.messages::-webkit-scrollbar-thumb,
+.composer-input::-webkit-scrollbar-thumb {
+  background: var(--atun-scrollbar);
+  border-radius: 999px;
+}
+
+.scrollable::-webkit-scrollbar-thumb:hover,
+.models::-webkit-scrollbar-thumb:hover,
+.messages::-webkit-scrollbar-thumb:hover,
+.composer-input::-webkit-scrollbar-thumb:hover {
+  background: var(--atun-scrollbar-hover);
+}

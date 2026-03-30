@@ -45,22 +45,13 @@ export function createChatShellHtml(webview: vscode.Webview, extensionUri: vscod
       <div id="chatError" class="notice" hidden></div>
       <div class="history-shell">
         <div id="emptyState" class="history-empty">
-          <div class="empty-wordmark">
-            <span>Chat</span>
-            <span class="empty-arrow">&#8593;</span>
-          </div>
-          <p class="empty-copy">Escribe el primer mensaje para empezar la sesion con el modelo seleccionado.</p>
+          <div class="empty-wordmark">ATUN AGENT</div>
+          <p class="empty-copy">Escribe el primer mensaje para empezar el chat local con el modelo seleccionado.</p>
         </div>
         <div id="messages" class="messages"></div>
       </div>
       <div id="composerShell" class="composer-shell">
-        <div class="composer-header">
-          <button id="toggleComposerSize" class="expand-button" title="Expandir input">^</button>
-        </div>
-        <div class="composer-frame">
-          <textarea id="composer" class="composer-input scrollable" placeholder="Escribe tu mensaje..."></textarea>
-        </div>
-        <div class="composer-meta">
+        <div class="composer-toolbar">
           <div class="prompt-actions">
             <button class="micro-button" data-insert="#" title="Adjuntar o mencionar contexto">#</button>
             <button class="micro-button" data-insert="/" title="Invocar skills">/</button>
@@ -68,21 +59,49 @@ export function createChatShellHtml(webview: vscode.Webview, extensionUri: vscod
           </div>
           <div class="composer-stats">
             <span id="tokenCount" class="stat">0 tok</span>
-            <button id="sendMessage" class="send-button">Enviar</button>
+            <button id="sendMessage" class="send-button" title="Enviar mensaje">&#10148;</button>
           </div>
+        </div>
+        <div class="composer-frame">
+          <button id="toggleComposerSize" class="expand-button" title="Expandir o contraer input">&#8597;</button>
+          <textarea id="composer" class="composer-input scrollable" rows="4" placeholder="Escribe tu mensaje..."></textarea>
         </div>
         <div class="footer-controls">
           <div class="footer-left">
-            <button id="newChat" class="chip">Nuevo chat</button>
-            <button class="chip static" disabled>Full Access</button>
-            <button class="chip static" disabled>Agent</button>
-            <label class="chip model-chip">
+            <label class="control-select">
+              <span>Access</span>
+              <select id="accessModeSelect" class="mini-select">
+                <option>Full Access</option>
+                <option>Approval Required</option>
+              </select>
+            </label>
+            <label class="control-select">
+              <span>Agent</span>
+              <select id="agentModeSelect" class="mini-select">
+                <option>Agent</option>
+                <option>Ask</option>
+                <option>Plan</option>
+                <option>Git</option>
+                <option>Docs</option>
+              </select>
+            </label>
+            <label class="control-select model-select-wrap">
               <span>Model</span>
-              <select id="modelSelect" class="model-select"></select>
+              <select id="modelSelect" class="mini-select"></select>
+            </label>
+            <label class="control-select">
+              <span>Reason</span>
+              <select id="reasoningSelect" class="mini-select">
+                <option>Off</option>
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+              </select>
             </label>
           </div>
           <div class="footer-right">
-            <button id="openNativeChat" class="chip native-link">Native</button>
+            <button id="newChat" class="chip subtle">Nuevo</button>
+            <button id="openNativeChat" class="chip subtle">Native</button>
             <div id="contextMeter" class="context-meter">0% contexto</div>
           </div>
         </div>
