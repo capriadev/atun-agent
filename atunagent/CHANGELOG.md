@@ -2,6 +2,26 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.4.0] - 2026-03-30
+
+### Changed
+
+- Rediseño completo de la interfaz del chat shell hacia una UI minimalista integrada al editor.
+- Se reemplazaron todos los `<select>` nativos (excepto el selector de modelo) por custom-selects con SVGs inline, dropdown propio y estado `active` destacado.
+- Selector de modelo estilizado con `appearance: none` y grupos `<optgroup>` con colores temáticos de VS Code.
+- Iconos SVG de assets inyectados directamente en el HTML como strings inline para cumplir con la CSP del webview.
+- El popup del medidor de contexto ahora se abre y persiste con un clic (toggle); se cierra al clicar fuera o al volver a clicar el botón.
+- El popup muestra tokens usados / 256k, barra de progreso animada y botón "Compactar contexto".
+- El handle `:::` del composer ahora soporta:
+  - **Arrastre** (mousedown + move) para redimensionar libremente.
+  - **Doble clic**: expande al máximo / contrae al contenido actual.
+  - **Single clic cuando expandido**: contrae al auto-height del contenido.
+- Textarea sin `resize` nativo; sin borde exterior del composer-shell (integrado visualmente al editor).
+- Todos los tokens de color se toman exclusivamente de variables `--vscode-*`, mapeados a `--atun-*` para encapsulamiento.
+- CSS reescrito desde cero: scrollbars de 5px, transiciones suaves, radios consistentes, estados hover/focus/disabled.
+- JS reescrito: sin dependencias externas, lógica de custom-select, popup, resize y render separados claramente.
+- Nuevo estado vacío del historial más discreto (logo + etiqueta + sugerencia).
+
 ## [2.3.3] - 2026-03-29
 
 ### Changed

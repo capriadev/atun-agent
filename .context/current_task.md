@@ -2,49 +2,46 @@
 
 ## Active Task
 
-Cerrar el release `2.4.0` con el rediseño completo de la interfaz del chat shell.
+Keep the `2.4.0` release synced in source control after the full chat shell redesign.
 
 ## What Was Being Worked On Before This
 
-El trabajo anterior completado fue el release `2.3.3`:
+The previous completed product work was release `2.3.3`:
 
-- se removieron los botones `Nuevo` y `Native` del footer
-- se reemplazaron los labels de texto por controles con iconos
-- se empujó el estilo visual hacia un look más minimal de editor
+- the shell was redesigned into a more minimal icon-led control surface
+- footer buttons `Nuevo` and `Native` were removed
+- selector labels were replaced with SVG icons from assets
 
 ## Last Thing Modified
 
-Los últimos cambios de código completados son:
+The latest completed code changes are:
 
-- `chat-shell-html.ts`: reescritura completa con custom-selects HTML, SVGs inline, context popup con toggle y handle de resize `:::`
-- `chat-shell.css`: reescritura completa con tokens `--vscode-*` mapeados a `--atun-*`, custom-select con dropdown, composer sin borde exterior, ctx-popup, scrollbars de 5px
-- `chat-shell.js`: reescritura completa con custom-select toggle, context popup por click persistente, resize por arrastre y doble-click, token counter
-- `changelog.md`: entrada `[2.4.0]` agregada
-- `package.json` (atunagent y workspace): versión bumpeada a `2.4.0`
+- `chat-shell-html.ts`: full rewrite with custom HTML selects, inline SVGs, persistent context popup and `:::` resize handle
+- `chat-shell.css`: full rewrite with `--vscode-*` tokens mapped to `--atun-*`, custom-select styling, borderless composer shell, context popup and compact scrollbars
+- `chat-shell.js`: full rewrite with custom-select toggles, persistent context popup, drag resize and token counter logic
+- `CHANGELOG.md`: pending `2.4.0` entry to be committed
 
 ## Decision Made And Why
 
-Decisión:
-- reemplazar los `<select>` nativos por custom-selects HTML estilizados (excepto el selector de modelo que usa `<select>` nativo con `appearance:none` y grupos)
-- inyectar SVGs como strings inline en el HTML para pasar la CSP del webview sin URLs de assets
-- manejar el popup del contexto con toggle por click (no hover) para que persista al interactuar con él
-- usar handle `:::` con arrastre, doble-click y single-click inteligente en el composer
-- reescribir CSS y JS desde cero para eliminar deuda acumulada de versiones anteriores
+Decision:
+- replace native `<select>` controls, except the model selector, with custom HTML controls for consistent styling
+- inject SVGs inline into the webview HTML to satisfy CSP without asset URL issues
+- keep the context popup on click-toggle instead of hover so it remains interactive
+- use a `:::` resize handle with drag, double-click and smart collapse behavior
 
-Por qué:
-- los `<select>` nativos no pueden estilizarse dentro de la webview de VSCode entre temas
-- el popup de hover no permite interactuar con su contenido (desaparece al mover el cursor)
-- la acumulación de parches en CSS/JS producía inconsistencias visuales severas
+Why:
+- native controls do not style consistently inside a VS Code webview
+- hover popups disappear while interacting with them
+- the previous CSS/JS had accumulated too much visual debt
 
 ## Logical Next Step
 
-Orden de ejecución actual:
+Current execution order:
 
-1. packagiar y enviar `2.4.0`
-2. validar en Extension Development Host los estados de los custom-selects
-3. conectar `accessValue` y `agentValue` al backend cuando se agregue soporte en `sidebar-view-model.ts`
-4. conectar `reasoningValue` al proveedor Groq cuando soporte reasoning mode
+1. commit the pending changelog/context sync
+2. push the current branch with the correct upstream tracking
+3. continue UI polish in the next session
 
 ## Session Close Note
 
-Este session lleva el chat shell a un rediseño visual completo: custom selects profesionales, popup persistente, composer integrado al editor.
+This session leaves the project on the full `2.4.0` chat shell redesign and closes the remaining source-control cleanup.
