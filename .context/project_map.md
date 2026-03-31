@@ -109,17 +109,21 @@ Current integration points:
 - native command registrations
 - native chat participant kept as a secondary bridge
 
-Current chat shell behavior (v2.4.0):
+Current chat shell behavior (v2.4.1):
 
 - one persistent chat surface is always rendered
 - first-time setup and provider management open inside the same chat surface
 - active chat uses a native-styled `<select>` for the model selector (with `optgroup` per connection)
-- access mode, agent mode and reasoning level use custom HTML selects with inline SVG icons and own dropdown, always visible
-- the composer has no outer border — it blends into the editor surface
+- access mode, agent mode and reasoning level use custom HTML selects with inline SVG icons and own dropdown
+- the shell removes most inner card framing so the editor/sidebar background becomes the main surface
+- the composer uses only a thin top separator and compact spacing so it reads like part of the editor instead of a nested panel
 - a `:::` resize handle above the textarea supports drag-to-resize, double-click to expand/collapse, and single-click to contract when expanded
+- manual resize and expand clamp against actual available panel height instead of only the default textarea row cap
 - the context usage meter opens a persistent popup (click-toggle) showing tokens/256k, a progress bar and a compact action button
 - all color tokens derive from `--vscode-*` variables mapped to `--atun-*` scoped vars
 - SVGs for custom-select icons are injected inline into the HTML string to pass the webview CSP
+- adaptive density classes progressively hide secondary labels and shrink control chrome as the sidebar narrows
+- history/composer scrollbars stay visually hidden until hover or focus for a more native-feeling compact UI
 
 The long-term direction is to increase native/editor-level integration while keeping the provider, persistence and chat runtime independent from any single VS Code API surface.
 
@@ -140,7 +144,7 @@ The long-term direction is to increase native/editor-level integration while kee
 
 - root workspace wrapper drives build/package commands
 - extension output is packaged as versioned VSIX files under `packages/`
-- current shipped line: `2.4.0`
+- current shipped line: `2.4.1`
 
 ## Local Debug Workflow
 

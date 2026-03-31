@@ -2,6 +2,16 @@
 
 All notable changes to **Atun Agent** will be documented in this file.
 
+## [2.4.1] - 2026-03-31
+
+### Changed
+
+- Compacted the chat shell so it uses the sidebar surface more directly instead of rendering the history as a large nested card.
+- Reduced padding, border weight, message bubble weight and control chrome across the shell for a denser, more integrated editor feel.
+- Composer expansion and manual resize now clamp against the real available panel height, making the textarea stretch meaningfully upward.
+- Added adaptive shell density so lower-priority labels collapse as the sidebar narrows while the core controls stay usable.
+- Made history and composer scrollbars stay visually hidden until hover or focus for a more minimal native-like presentation.
+
 ## [2.4.0] - 2026-03-30
 
 ### Changed
