@@ -47,6 +47,7 @@ const saveConnection   = $('saveConnection');
 const refreshModels    = $('refreshModels');
 const messagesEl       = $('messages');
 const emptyState       = $('emptyState');
+const chatShell        = document.querySelector('.chat-shell');
 const composerShell    = $('composerShell');
 const composer         = $('composer');
 const resizeHandle     = $('composerResizeHandle');
@@ -89,9 +90,20 @@ const MAX_ROWS = 10;
 
 function minH() { return LINE_H * MIN_ROWS; }
 function maxH() { return LINE_H * MAX_ROWS; }
+function getComposerChromeHeight() {
+  return composerShell.getBoundingClientRect().height - composer.getBoundingClientRect().height;
+}
+
+function getMaxComposerHeight() {
+  const shellHeight = chatShell?.clientHeight || window.innerHeight;
+  const chromeHeight = getComposerChromeHeight();
+  const minHistoryHeight = Math.max(64, Math.min(132, Math.round(shellHeight * 0.16)));
+  return Math.max(minH(), shellHeight - chromeHeight - minHistoryHeight);
+}
 
 function setComposerHeight(px) {
-  const clamped = Math.max(minH(), Math.min(px, ui.composerExpanded ? 99999 : maxH()));
+  const maxAllowed = ui.composerExpanded || ui.manualHeight ? getMaxComposerHeight() : maxH();
+  const clamped = Math.max(minH(), Math.min(px, maxAllowed));
   composer.style.height = clamped + 'px';
   composer.style.overflowY = composer.scrollHeight > clamped ? 'auto' : 'hidden';
 }
@@ -115,9 +127,10 @@ resizeHandle.addEventListener('dblclick', (e) => {
   } else {
     // Expandir al 100%
     ui.composerExpanded = true;
+    ui.manualHeight = undefined;
     composerShell.classList.add('expanded');
-    composer.style.maxHeight = '100%';
-    composer.style.height = '100%';
+    composer.style.maxHeight = getMaxComposerHeight() + 'px';
+    setComposerHeight(getMaxComposerHeight());
   }
 });
 
@@ -149,11 +162,11 @@ resizeHandle.addEventListener('mousedown', (e) => {
 document.addEventListener('mousemove', (e) => {
   if (!isDragging) return;
   const delta = dragStartY - e.clientY; // arrastrar hacia arriba aumenta altura
-  const next = Math.max(minH(), dragStartH + delta);
+  const next = Math.max(minH(), Math.min(dragStartH + delta, getMaxComposerHeight()));
   ui.manualHeight = next;
   ui.composerExpanded = false;
   composerShell.classList.remove('expanded');
-  composer.style.maxHeight = maxH() + 'px';
+  composer.style.maxHeight = getMaxComposerHeight() + 'px';
   setComposerHeight(next);
 });
 
@@ -179,6 +192,12 @@ function estimateContext() {
     ? (estTokens / 1000).toFixed(0) + 'k'
     : String(estTokens);
   return { percent, kTokens, estTokens };
+}
+
+function syncDensity() {
+  const width = window.innerWidth;
+  document.body.classList.toggle('density-compact', width <= 440);
+  document.body.classList.toggle('density-nano', width <= 360);
 }
 
 /* ── Context popup (toggle por click) ───────────────────────────────── */
@@ -415,6 +434,7 @@ function renderChat() {
   composer.disabled    = state.isStreaming || !state.modelSelectorOptions.length;
 
   autoResize();
+  syncDensity();
 }
 
 function render() {
@@ -492,6 +512,27 @@ window.addEventListener('message', (event) => {
   render();
 });
 
-window.addEventListener('load', () => autoResize(true));
+window.addEventListener('resize', () => {
+  syncDensity();
+
+  if (ui.composerExpanded) {
+    composer.style.maxHeight = getMaxComposerHeight() + 'px';
+    setComposerHeight(getMaxComposerHeight());
+    return;
+  }
+
+  if (ui.manualHeight) {
+    composer.style.maxHeight = getMaxComposerHeight() + 'px';
+    setComposerHeight(ui.manualHeight);
+    return;
+  }
+
+  autoResize(true);
+});
+
+window.addEventListener('load', () => {
+  syncDensity();
+  autoResize(true);
+});
 
 vscode.postMessage({ type: 'ready' });

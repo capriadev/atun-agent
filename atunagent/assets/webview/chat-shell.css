@@ -659,9 +659,16 @@ svg { display: block; flex-shrink: 0; }
 .models::-webkit-scrollbar-thumb,
 .messages::-webkit-scrollbar-thumb,
 .composer-input::-webkit-scrollbar-thumb {
-  background: var(--atun-scroll-thumb);
+  background: transparent;
   border-radius: 99px;
   border: 1px solid transparent;
+}
+
+.models:hover::-webkit-scrollbar-thumb,
+.messages:hover::-webkit-scrollbar-thumb,
+.composer-input:hover::-webkit-scrollbar-thumb,
+.composer-input:focus::-webkit-scrollbar-thumb {
+  background: var(--atun-scroll-thumb);
 }
 
 .models::-webkit-scrollbar-thumb:hover,
@@ -674,6 +681,37 @@ svg { display: block; flex-shrink: 0; }
   background: transparent;
 }
 
+body.density-compact .csel[data-csel="access"] .csel-label,
+body.density-compact .csel[data-csel="agent"] .csel-label,
+body.density-compact .csel[data-csel="reasoning"] .csel-label {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+
+body.density-compact .csel[data-csel="access"],
+body.density-compact .csel[data-csel="agent"],
+body.density-compact .csel[data-csel="reasoning"] {
+  gap: 2px;
+  padding-inline: 3px;
+}
+
+body.density-compact .csel-native-select {
+  max-width: 96px;
+}
+
+body.density-nano .token-stat {
+  display: none;
+}
+
+body.density-nano .controls-bar {
+  gap: 1px;
+}
+
+body.density-nano .csel-native-select {
+  max-width: 78px;
+}
+
 @media (max-width: 420px) {
   .messages {
     padding-inline: 4px;
@@ -681,24 +719,5 @@ svg { display: block; flex-shrink: 0; }
 
   .message {
     max-width: 100%;
-  }
-
-  .csel[data-csel="access"] .csel-label,
-  .csel[data-csel="agent"] .csel-label,
-  .csel[data-csel="reasoning"] .csel-label {
-    max-width: 0;
-    opacity: 0;
-    overflow: hidden;
-  }
-
-  .csel[data-csel="access"],
-  .csel[data-csel="agent"],
-  .csel[data-csel="reasoning"] {
-    gap: 2px;
-    padding-inline: 3px;
-  }
-
-  .csel-native-select {
-    max-width: 96px;
   }
 }
