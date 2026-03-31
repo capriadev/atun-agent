@@ -90,27 +90,27 @@ svg { display: block; flex-shrink: 0; }
 .screen        { display: none; height: 100vh; overflow: hidden; }
 .screen.active { display: block; }
 
-.chat-screen { padding: 6px; height: 100vh; }
+.chat-screen { padding: 0; height: 100vh; }
 
 .chat-shell {
-  height: calc(100vh - 12px);
+  height: 100vh;
   min-height: 0;
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
-  gap: 5px;
+  gap: 0;
 }
 
 /* ── 4. PANEL DE SETUP ──────────────────────────────────────────────── */
 .surface {
   border: 1px solid var(--atun-border);
-  border-radius: var(--atun-r);
-  background: var(--atun-surface-alt);
+  border-radius: var(--atun-r-sm);
+  background: var(--atun-bg);
 }
 
 .config-panel {
-  padding: 12px;
+  padding: 10px;
   display: grid;
-  gap: 10px;
+  gap: 8px;
   min-height: 0;
   overflow: hidden;
 }
@@ -206,9 +206,9 @@ svg { display: block; flex-shrink: 0; }
   position: relative;
   min-height: 0;
   overflow: hidden;
-  border: 1px solid var(--atun-border);
-  border-radius: var(--atun-r);
-  background: var(--atun-surface);
+  border: none;
+  border-radius: 0;
+  background: transparent;
 }
 
 /* Estado vacío */
@@ -219,8 +219,8 @@ svg { display: block; flex-shrink: 0; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 24px;
+  gap: 6px;
+  padding: 16px 12px;
   text-align: center;
   pointer-events: none;
   user-select: none;
@@ -228,23 +228,23 @@ svg { display: block; flex-shrink: 0; }
 .history-empty[hidden] { display: none; }
 
 .empty-logo     { opacity: .25; }
-.empty-logo svg { width: 40px; height: 40px; }
+.empty-logo svg { width: 30px; height: 30px; }
 
 .empty-label {
   margin: 0;
-  font-size: 11px;
-  letter-spacing: .18em;
+  font-size: 10px;
+  letter-spacing: .16em;
   text-transform: uppercase;
   color: var(--atun-fg-muted);
-  opacity: .7;
+  opacity: .62;
 }
 
 .empty-hint {
   margin: 0;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--atun-fg-muted);
-  opacity: .5;
-  max-width: 200px;
+  opacity: .48;
+  max-width: 180px;
 }
 
 /* Mensajes */
@@ -252,30 +252,30 @@ svg { display: block; flex-shrink: 0; }
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 6px;
+  gap: 4px;
   align-content: start;
   min-height: 0;
   height: 100%;
   overflow: auto;
-  padding: 10px;
+  padding: 6px 8px 4px;
 }
 .messages[hidden] { display: none; }
 
 .message {
-  max-width: 96%;
-  padding: 8px 11px;
-  border-radius: var(--atun-r);
-  border: 1px solid var(--atun-border);
-  background: var(--atun-surface);
+  max-width: min(100%, 720px);
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--atun-border) 65%, transparent);
+  background: color-mix(in srgb, var(--atun-surface-alt) 60%, transparent);
   white-space: pre-wrap;
   word-break: break-word;
-  font-size: 12px;
-  line-height: 1.55;
+  font-size: 11.5px;
+  line-height: 1.5;
 }
 .message.user {
   margin-left: auto;
-  background: color-mix(in srgb, var(--atun-accent) 10%, var(--atun-surface));
-  border-color: color-mix(in srgb, var(--atun-accent) 30%, var(--atun-border));
+  background: color-mix(in srgb, var(--atun-accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--atun-accent) 25%, var(--atun-border));
 }
 .message.assistant { margin-right: auto; }
 .message.error     { border-color: var(--atun-error); }
@@ -284,8 +284,9 @@ svg { display: block; flex-shrink: 0; }
 .composer-shell {
   display: flex;
   flex-direction: column;
-  /* sin borde exterior: se ve como parte del editor */
-  background: transparent;
+  border-top: 1px solid color-mix(in srgb, var(--atun-border) 75%, transparent);
+  padding: 0 6px 4px;
+  background: var(--atun-bg);
 }
 
 /* — Handle de resize — */
@@ -293,18 +294,18 @@ svg { display: block; flex-shrink: 0; }
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 14px;
+  height: 10px;
   cursor: ns-resize;
   user-select: none;
   color: var(--atun-fg-muted);
-  opacity: .4;
+  opacity: .28;
   transition: opacity .15s;
 }
 .composer-resize-handle:hover { opacity: .9; }
 
 .resize-dots {
-  font-size: 16px;
-  letter-spacing: 3px;
+  font-size: 12px;
+  letter-spacing: 2px;
   line-height: 1;
   pointer-events: none;
 }
@@ -315,10 +316,10 @@ svg { display: block; flex-shrink: 0; }
   /* 4 líneas por defecto, max 10 */
   min-height: calc(var(--atun-line-h) * 4);
   max-height: calc(var(--atun-line-h) * 10);
-  padding: 8px 10px;
+  padding: 6px 0;
   border: none;
-  border-top: 1px solid var(--atun-border);
-  border-bottom: 1px solid var(--atun-border);
+  border-top: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--atun-border) 75%, transparent);
   border-radius: 0;
   resize: none;      /* manejado por JS */
   background: transparent;
@@ -340,7 +341,7 @@ svg { display: block; flex-shrink: 0; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 6px;
+  padding: 3px 0 2px;
   gap: 4px;
 }
 
@@ -355,8 +356,8 @@ svg { display: block; flex-shrink: 0; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   padding: 0;
   border: none;
   border-radius: var(--atun-r-sm);
@@ -374,10 +375,10 @@ svg { display: block; flex-shrink: 0; }
 
 /* Contador de tokens */
 .token-stat {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--atun-fg-muted);
   letter-spacing: .03em;
-  padding: 0 4px;
+  padding: 0 2px;
   min-width: 24px;
   text-align: right;
   line-height: 1;
@@ -388,8 +389,8 @@ svg { display: block; flex-shrink: 0; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   padding: 0;
   border: none;
   border-radius: 50%;
@@ -407,12 +408,13 @@ svg { display: block; flex-shrink: 0; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 6px 2px;
-  gap: 4px;
+  padding: 2px 0 0;
+  gap: 2px;
   flex-wrap: nowrap;
+  min-height: 22px;
 }
 
-.controls-left  { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; min-width: 0; }
+.controls-left  { display: flex; align-items: center; gap: 1px; flex-wrap: nowrap; min-width: 0; overflow: hidden; }
 .controls-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
 /* ── 8. CUSTOM SELECT (csel) ────────────────────────────────────────── */
@@ -420,15 +422,15 @@ svg { display: block; flex-shrink: 0; }
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  height: 24px;
-  padding: 0 6px;
+  gap: 3px;
+  height: 20px;
+  padding: 0 4px;
   border: 1px solid transparent;
   border-radius: var(--atun-r-sm);
   cursor: pointer;
   user-select: none;
   color: var(--atun-fg-muted);
-  font-size: 11px;
+  font-size: 10px;
   transition: border-color .1s, background .1s, color .1s;
   white-space: nowrap;
 }
@@ -453,7 +455,7 @@ svg { display: block; flex-shrink: 0; }
 .csel:hover .csel-icon,
 .csel.open  .csel-icon { opacity: 1; }
 
-.csel-label  { font-size: 11px; min-width: 0; overflow: hidden; text-overflow: ellipsis; max-width: 90px; }
+.csel-label  { font-size: 10px; min-width: 0; overflow: hidden; text-overflow: ellipsis; max-width: 74px; }
 
 .csel-chevron {
   display: inline-flex;
@@ -468,13 +470,13 @@ svg { display: block; flex-shrink: 0; }
 .csel-dropdown {
   display: none;
   position: absolute;
-  bottom: calc(100% + 5px);
+  bottom: calc(100% + 4px);
   left: 0;
   min-width: 100%;
   background: var(--atun-popup-bg);
   border: 1px solid var(--atun-popup-bdr);
   border-radius: var(--atun-r);
-  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+  box-shadow: 0 4px 14px rgba(0,0,0,.22);
   z-index: 200;
   padding: 3px;
   overflow: hidden;
@@ -486,12 +488,12 @@ svg { display: block; flex-shrink: 0; }
   align-items: center;
   gap: 7px;
   width: 100%;
-  padding: 5px 8px;
+  padding: 4px 7px;
   border: none;
   border-radius: var(--atun-r-sm);
   background: transparent;
   color: var(--atun-popup-fg);
-  font-size: 11px;
+  font-size: 10px;
   text-align: left;
   cursor: pointer;
   white-space: nowrap;
@@ -521,10 +523,10 @@ svg { display: block; flex-shrink: 0; }
   background: transparent;
   color: inherit;
   font: inherit;
-  font-size: 11px;
+  font-size: 10px;
   cursor: pointer;
   min-width: 0;
-  max-width: 130px;
+  max-width: 124px;
   overflow: hidden;
   text-overflow: ellipsis;
   /* padding mínimo para que no choque con el icono */
@@ -549,13 +551,13 @@ svg { display: block; flex-shrink: 0; }
 .ctx-meter-btn {
   display: inline-flex;
   align-items: center;
-  height: 24px;
-  padding: 0 6px;
+  height: 20px;
+  padding: 0 4px;
   border: 1px solid transparent;
   border-radius: var(--atun-r-sm);
   background: transparent;
   color: var(--atun-fg-muted);
-  font-size: 10px;
+  font-size: 9px;
   cursor: pointer;
   transition: border-color .1s, background .1s, color .1s;
   white-space: nowrap;
@@ -576,12 +578,12 @@ svg { display: block; flex-shrink: 0; }
   position: absolute;
   bottom: calc(100% + 6px);
   right: 0;
-  width: 200px;
+  width: 188px;
   background: var(--atun-popup-bg);
   border: 1px solid var(--atun-popup-bdr);
   border-radius: var(--atun-r);
   box-shadow: 0 6px 20px rgba(0,0,0,.3);
-  padding: 10px 12px;
+  padding: 9px 10px;
   z-index: 300;
   color: var(--atun-popup-fg);
 }
@@ -652,15 +654,51 @@ svg { display: block; flex-shrink: 0; }
 /* ── 10. SCROLLBARS ─────────────────────────────────────────────────── */
 .models::-webkit-scrollbar,
 .messages::-webkit-scrollbar,
-.composer-input::-webkit-scrollbar { width: 5px; }
+.composer-input::-webkit-scrollbar { width: 4px; }
 
 .models::-webkit-scrollbar-thumb,
 .messages::-webkit-scrollbar-thumb,
 .composer-input::-webkit-scrollbar-thumb {
   background: var(--atun-scroll-thumb);
   border-radius: 99px;
+  border: 1px solid transparent;
 }
 
 .models::-webkit-scrollbar-thumb:hover,
 .messages::-webkit-scrollbar-thumb:hover,
 .composer-input::-webkit-scrollbar-thumb:hover { background: var(--atun-scroll-hover); }
+
+.models::-webkit-scrollbar-track,
+.messages::-webkit-scrollbar-track,
+.composer-input::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media (max-width: 420px) {
+  .messages {
+    padding-inline: 4px;
+  }
+
+  .message {
+    max-width: 100%;
+  }
+
+  .csel[data-csel="access"] .csel-label,
+  .csel[data-csel="agent"] .csel-label,
+  .csel[data-csel="reasoning"] .csel-label {
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  .csel[data-csel="access"],
+  .csel[data-csel="agent"],
+  .csel[data-csel="reasoning"] {
+    gap: 2px;
+    padding-inline: 3px;
+  }
+
+  .csel-native-select {
+    max-width: 96px;
+  }
+}
